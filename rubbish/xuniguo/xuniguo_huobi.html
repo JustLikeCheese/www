@@ -1,0 +1,3975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>济明经济</title>
+    <style>
+        :root {
+            --primary: #7b2cbf;
+            --primary-light: #9d4edd;
+            --secondary: #ff9e00;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #38b000;
+            --danger: #d00000;
+            --info: #4361ee;
+            --bg: #f5f3ff;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #6c757d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #app {
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 加载界面 */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(123, 44, 191, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loader-text {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 顶部导航 */
+        .app-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .app-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        /* 侧边菜单 */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: var(--card-bg);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 200;
+            transition: transform 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .side-menu.open {
+            transform: translateX(-300px);
+        }
+        
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 12px 0;
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1rem;
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            padding: 20px;
+            padding-bottom: 80px; /* 为底部导航留空间 */
+        }
+        
+        /* 设置页面 */
+        .setup-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            margin-bottom: 15px;
+        }
+        
+        .setup-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(123, 44, 191, 0.2);
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(123, 44, 191, 0.25);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            box-shadow: 0 4px 6px rgba(255, 158, 0, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #ffaa00;
+            box-shadow: 0 6px 8px rgba(255, 158, 0, 0.25);
+        }
+        
+        /* 钱包卡片 */
+        .wallet-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .wallet-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .wallet-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .wallet-balance {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .wallet-id {
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .wallet-currency {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        /* 税收卡片 */
+        .tax-card {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .tax-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .tax-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .tax-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .tax-currency {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        /* 更多卡片按钮 */
+        .more-cards-btn {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            background-color: rgba(123, 44, 191, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .more-cards-btn:hover {
+            background-color: rgba(123, 44, 191, 0.2);
+        }
+        
+        /* 更多卡片页面 */
+        #more-cards-page {
+            display: none;
+        }
+        
+        .more-cards-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .more-cards-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .more-cards-add {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .more-cards-container {
+            min-height: 200px;
+        }
+        
+        .no-cards-message {
+            text-align: center;
+            color: var(--text-light);
+            padding: 40px 0;
+        }
+        
+        /* 卡片编辑模式 */
+        .card-edit-mode {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.5);
+            padding: 5px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .card-edit-btn {
+            background: none;
+            border: none;
+            color: white;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        
+        .wallet-card:hover .card-edit-mode,
+        .tax-card:hover .card-edit-mode {
+            display: block;
+        }
+        
+        /* 快速操作 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: rgba(123, 44, 191, 0.05);
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .action-text {
+            font-size: 0.75rem;
+            color: var(--text);
+        }
+        
+        /* 交易卡片 */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-link {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: normal;
+        }
+        
+        .transaction-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .transaction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .income .transaction-icon {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+        
+        .outcome .transaction-icon {
+            background-color: rgba(208, 0, 0, 0.1);
+            color: var(--danger);
+        }
+        
+        .tax .transaction-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--info);
+        }
+        
+        .transaction-details {
+            flex-grow: 1;
+        }
+        
+        .transaction-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .transaction-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .income .transaction-amount {
+            color: var(--success);
+        }
+        
+        .outcome .transaction-amount {
+            color: var(--danger);
+        }
+        
+        .tax .transaction-amount {
+            color: var(--info);
+        }
+        
+        /* 生成支付码页面 */
+        .code-container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            word-break: break-all;
+            position: relative;
+            border: 1px dashed #ddd;
+        }
+        
+        .code-text {
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        /* 接收支付页面 */
+        .paste-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .paste-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(123, 44, 191, 0.05);
+        }
+        
+        .paste-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 90;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.7rem;
+            padding: 5px 10px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 3px;
+        }
+        
+        /* 弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        /* 货币详情页面 */
+        #currency-detail-page {
+            display: none;
+        }
+        
+        .currency-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .currency-detail-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .currency-detail-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .currency-detail-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .currency-detail-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .currency-detail-info {
+            margin-top: 20px;
+        }
+        
+        .currency-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .currency-detail-label {
+            opacity: 0.8;
+        }
+        
+        .currency-detail-value {
+            font-weight: 500;
+        }
+        
+        .official-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        .official-badge i {
+            color: #4cc9f0;
+            margin-right: 3px;
+        }
+        
+        /* 仓库相关样式 */
+        #warehouse-page {
+            display: none;
+        }
+        
+        .warehouse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .warehouse-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .warehouse-add {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .warehouse-container {
+            min-height: 200px;
+        }
+        
+        .warehouse-category {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .warehouse-category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .warehouse-category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .warehouse-category-name {
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        
+        .warehouse-category-count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-left: 10px;
+        }
+        
+        /* 物品类别页面 */
+        #category-page {
+            display: none;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .category-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .category-add {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .category-container {
+            min-height: 200px;
+        }
+        
+        /* 物品卡片 */
+        .item-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .item-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .item-amount {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .item-value {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        /* 物品详情页面 */
+        #item-detail-page {
+            display: none;
+        }
+        
+        .item-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .item-detail-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .item-detail-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .item-detail-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .item-detail-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .item-detail-info {
+            margin-top: 20px;
+        }
+        
+        .item-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .item-detail-label {
+            opacity: 0.8;
+        }
+        
+        .item-detail-value {
+            font-weight: 500;
+        }
+        
+        /* 转让数量输入框 */
+        .transfer-amount-input {
+            margin: 15px 0;
+        }
+        
+        /* 模组卡片样式 */
+        .mod-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mod-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .mod-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .mod-card-info {
+            flex-grow: 1;
+        }
+        
+        .mod-card-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .mod-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .mod-card-version {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-left: 10px;
+        }
+        
+        /* 模组详情页面 */
+        #mod-detail-page {
+            display: none;
+        }
+        
+        .mod-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .mod-detail-back {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .mod-detail-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mod-detail-card::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .mod-detail-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .mod-detail-info {
+            margin-top: 20px;
+        }
+        
+        .mod-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .mod-detail-label {
+            opacity: 0.8;
+        }
+        
+        .mod-detail-value {
+            font-weight: 500;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .action-btn {
+                padding: 8px 5px;
+            }
+        }
+        /* 添加新的样式 */
+        .setup-footer {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .admin-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        
+        .admin-btn:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .admin-section {
+            background-color: rgba(123, 44, 191, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .admin-title {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+        <div class="loader-text">加载ㄍㄨㄛㄉㄨ...</div>
+    </div>
+    
+    <div id="app">
+        <!-- 设置页面 -->
+        <div id="setup-page" class="setup-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h1 class="setup-title">济明经济（国际版）</h1>
+            </div>
+            
+            <div class="form-card">
+                <div class="form-group">
+                    <label for="setup-qqid" class="form-label">填写ㄗㄋㄨㄛ（你的）QQ号（务必正确填写）</label>
+                    <input type="text" id="setup-qqid" class="form-control" placeholder="输入ㄗㄋㄨㄛQQ号">
+                </div>
+                <div class="form-group">
+                    <label for="setup-regcode" class="form-label">注册码</label>
+                    <input type="text" id="setup-regcode" class="form-control" placeholder="输入官方提供ㄋㄨㄛ注册码">
+                </div>
+                <button id="setup-btn" class="btn">ㄊㄚㄍㄥ账户</button>
+                                <!-- 添加管理员功能区域 -->
+                <div class="admin-section">
+                    <div class="admin-title">管理员功能</div>
+                    <button id="generate-regcode-btn" class="admin-btn">
+                        <i class="fas fa-key"></i> 生成注册码
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-card">
+                <h3 style="margin-bottom: 15px; text-align: center;">系統說明</h3>
+                <ul style="padding-left: 20px; color: var(--text-light); font-size: 0.9rem;">
+                    <li style="margin-bottom: 10px;">自主开发软件，該軟件默认语言为人造语：沧语（ㄘㄤ）</li>
+                    <li style="margin-bottom: 10px;">注册码请寻找官方或被授予注册码发布资格的国家</li>
+                    <li style="margin-bottom: 10px;">官方Q群：781527293，可申请加入组织。可以申请添加贵国本土发行货币，更换语言。但需保证遵循《货币流通方案与价值保证规章》等保证经济运行的规章</li>
+                    <li style="margin-bottom: 10px;">交易码10分钟内有效，交易请在与对方沟通后，对方熟知的情况下复制转账码给对方</li>
+                    <li style="margin-bottom: 10px;">请完全遵循《正德四年 · 货币流通方案与价值保证规章》等相关规章，该规章经过深思熟虑，保证货币的价值及稳定</li>
+                    <li>防伪和防重复使用机制</li>
+                    <li style="margin-bottom: 10px;">本软件开发成本价值约为396元（主要为人力成本＋技术成本）（实际花费成本低）</li>
+                    <li style="margin-bottom: 10px;">本软件正式版开发时间约201天</li>
+                    <li style="margin-bottom: 10px;">本软件版本为国际通用版本</li>
+                    <li style="margin-bottom: 10px;">提示：所展示内容与现实无任何关联，与现实货币不挂钩，仅用与模拟国家活动用处
+本系统不涉及任何真实货币交易，不提供任何形式的兑换服务，不具备任何现实经济价值。
+根据**中华人民共和国相关法律法规**，本系统严格遵循以下规定：  
+
+- 《中华人民共和国中国人民银行法》第20条 
+  > 任何单位和个人不得印制、发售代币票券，以代替人民币在市场上流通。  
+  - 本系统合规性：本系统不发行任何具有现实价值的代币，所有货币仅为虚拟模拟数据，不与人民币挂钩。  
+
+- 《关于防范代币发行融资风险的公告》 
+  > 任何组织和个人不得非法从事代币发行融资活动。  
+  - 本系统合规性：本系统不涉及融资、投资或任何形式的金融交易，仅用于模拟实验。  
+
+- 《网络游戏管理暂行办法》 
+  > 网络游戏虚拟货币的使用范围仅限于兑换自身提供的网络游戏产品和服务。  
+  - 本系统合规性：本系统不提供任何兑换服务，所有数据仅用于模拟用途</li>
+  <li style="margin-bottom: 10px;">网络模拟国家爱好者使用</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="modal" id="generate-regcode-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">生成注册码</div>
+                    <button class="modal-close" id="regcode-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="initial-balance" class="form-label">初始余额</label>
+                        <input type="number" id="initial-balance" class="form-control" min="0" value="10000" placeholder="输入初始余额">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currency-name" class="form-label">货币名称</label>
+                        <input type="text" id="currency-name" class="form-control" value="济明币" placeholder="输入货币名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currency-color" class="form-label">货币颜色</label>
+                        <input type="color" id="currency-color" class="form-control" value="#7b2cbf" style="height: 50px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tax-rate" class="form-label">交易税率 (%)</label>
+                        <input type="number" id="tax-rate" class="form-control" min="0" max="50" value="3" placeholder="输入税率">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currency-issuer" class="form-label">发行商</label>
+                        <input type="text" id="currency-issuer" class="form-control" value="晨曦东亚 & PVSO和平化虚拟国组织" placeholder="输入发行商名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currency-supervisor" class="form-label">监督组</label>
+                        <input type="text" id="currency-supervisor" class="form-control" value="晨曦东亚经济部" placeholder="输入监督组名称">
+                    </div>
+                    
+                    <button id="generate-regcode-confirm" class="btn">生成注册码</button>
+                    
+                    <div class="code-container" id="regcode-result" style="display: none; margin-top: 20px;">
+                        <button class="copy-btn" id="copy-regcode-btn"><i class="fas fa-copy"></i> 复制</button>
+                        <div class="code-text" id="regcode-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主应用页面 -->
+        <div id="main-page" style="display: none;">
+            <!-- 顶部导航 -->
+            <div class="app-bar">
+                <div class="app-title">我的钱包</div>
+                <button class="app-menu-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+            </div>
+            
+            <!-- 侧边菜单 -->
+            <div class="side-menu" id="side-menu">
+                <div class="menu-header">
+                    <h3>菜单</h3>
+                    <button class="menu-close" id="menu-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <a href="#" class="menu-item" data-page="wallet"><i class="fas fa-wallet"></i> 我的钱包</a>
+                <a href="#" class="menu-item" data-page="warehouse"><i class="fas fa-warehouse"></i> 我的仓库</a>
+                <a href="#" class="menu-item" data-page="mods"><i class="fas fa-puzzle-piece"></i> 模组</a>
+                <a href="#" class="menu-item" data-page="generate"><i class="fas fa-qrcode"></i> 生成支付码</a>
+                <a href="#" class="menu-item" data-page="receive"><i class="fas fa-hand-holding-usd"></i> 接收支付</a>
+                <a href="#" class="menu-item" data-page="history"><i class="fas fa-history"></i> 交易记录</a>
+                <a href="#" class="menu-item" id="export-data"><i class="fas fa-file-export"></i> 导出数据</a>
+                <a href="#" class="menu-item" id="import-data"><i class="fas fa-file-import"></i> 导入数据</a>
+                <a href="#" class="menu-item" id="reset-btn"><i class="fas fa-redo"></i> 注销账户</a>
+                <a href="#" class="menu-item" id="about-btn"><i class="fas fa-info-circle"></i> 关于系统</a>
+            </div>
+            
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <!-- 钱包页面 -->
+                <div id="wallet-page" class="page">
+                    <div class="wallet-card" id="main-wallet-card">
+                        <div class="wallet-title">可用余额</div>
+                        <div class="wallet-balance"><span id="current-balance">0</span> <span id="currency-symbol">¥</span></div>
+                        <div class="wallet-id"><i class="fas fa-user"></i> <span id="display-qqid"></span></div>
+                        <div class="wallet-currency" id="wallet-currency-name">济明币</div>
+                        <div class="card-edit-mode">
+                            <button class="card-edit-btn" title="设为默认"><i class="fas fa-star"></i></button>
+                            <button class="card-edit-btn" title="转让卡片"><i class="fas fa-exchange-alt"></i></button>
+                            <button class="card-edit-btn" title="删除卡片"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="tax-card" id="main-tax-card">
+                        <div class="tax-title">累计税收</div>
+                        <div class="tax-amount"><span id="total-tax">0</span> <span id="tax-currency-symbol">¥</span></div>
+                        <div class="wallet-id"><i class="fas fa-landmark"></i> 货币流通税</div>
+                        <div class="tax-currency" id="tax-currency-name">济明币</div>
+                        <div class="card-edit-mode">
+                            <button class="card-edit-btn" title="设为默认"><i class="fas fa-star"></i></button>
+                            <button class="card-edit-btn" title="转让卡片"><i class="fas fa-exchange-alt"></i></button>
+                            <button class="card-edit-btn" title="删除卡片"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="more-cards-btn" id="more-cards-btn">
+                        <i class="fas fa-ellipsis-h"></i> 更多卡片
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button class="action-btn" data-page="generate">
+                            <div class="action-icon"><i class="fas fa-paper-plane"></i></div>
+                            <div class="action-text">转账</div>
+                        </button>
+                        <button class="action-btn" data-page="receive">
+                            <div class="action-icon"><i class="fas fa-qrcode"></i></div>
+                            <div class="action-text">收款</div>
+                        </button>
+                        <button class="action-btn" data-page="warehouse">
+                            <div class="action-icon"><i class="fas fa-warehouse"></i></div>
+                            <div class="action-text">仓库</div>
+                        </button>
+                        <button class="action-btn" data-page="history">
+                            <div class="action-icon"><i class="fas fa-history"></i></div>
+                            <div class="action-text">记录</div>
+                        </button>
+                    </div>
+                    
+                    <h3 class="section-title">
+                        ㄙㄏㄚ交易
+                        <a href="#" class="section-link" data-page="history">查看全部</a>
+                    </h3>
+                    
+                    <div id="recent-transactions"></div>
+                </div>
+                
+                <!-- 更多卡片页面 -->
+                <div id="more-cards-page" class="page">
+                    <div class="more-cards-header">
+                        <button class="more-cards-back" id="more-cards-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3>更多卡片</h3>
+                        <button class="more-cards-add" id="more-cards-add-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    
+                    <div class="more-cards-container" id="more-cards-container">
+                        <div class="no-cards-message">未有其他卡片</div>
+                    </div>
+                </div>
+                
+                <!-- 货币详情页面 -->
+                <div id="currency-detail-page" class="page">
+                    <div class="currency-detail-header">
+                        <button class="currency-detail-back" id="currency-detail-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3>货币详情</h3>
+                        <div style="width: 24px;"></div> <!-- 占位符，保持标题居中 -->
+                    </div>
+                    
+                    <div class="currency-detail-card" id="currency-detail-card">
+                        <div class="currency-detail-title" id="detail-currency-name">济明币</div>
+                        <div class="currency-detail-info">
+                            <div class="currency-detail-row">
+                                <span class="currency-detail-label">发行商</span>
+                                <span class="currency-detail-value" id="detail-issuer">晨曦东亚 & PVSO和平化虚拟国组织</span>
+                            </div>
+                            <div class="currency-detail-row">
+                                <span class="currency-detail-label">交易税收率</span>
+                                <span class="currency-detail-value" id="detail-tax-rate">3%</span>
+                            </div>
+                            <div class="currency-detail-row">
+                                <span class="currency-detail-label">货币监督组</span>
+                                <span class="currency-detail-value">
+                                    <span id="detail-supervisor">晨曦东亚经济部</span>
+                                    <span class="official-badge"><i class="fas fa-check-circle"></i>官方</span>
+                                </span>
+                            </div>
+                            <div class="currency-detail-row">
+                                <span class="currency-detail-label">当前余额</span>
+                                <span class="currency-detail-value" id="detail-balance">0.00 <span id="detail-symbol">¥</span></span>
+                            </div>
+                            <div class="currency-detail-row">
+                                <span class="currency-detail-label">累计税收</span>
+                                <span class="currency-detail-value" id="detail-total-tax">0.00 <span id="detail-tax-symbol">¥</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="set-default-btn" style="margin-bottom: 15px;">设为默认货币</button>
+                    <button class="btn" id="transfer-currency-btn" style="margin-bottom: 15px; background-color: var(--secondary);">转让该货币卡</button>
+                    <button class="btn" id="delete-currency-btn" style="background-color: var(--danger);">删除该货币卡</button>
+                </div>
+                
+                <!-- 生成支付码页面 -->
+                <div id="generate-page" class="page" style="display: none;">
+                    <h3 class="section-title">生成支付码</h3>
+                    
+                    <div class="form-group">
+                        <label for="currency-select" class="form-label">选择货币</label>
+                        <select id="currency-select" class="form-control">
+                            <!-- 动态填充货币选项 -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount" class="form-label">转账金额</label>
+                        <input type="number" id="amount" class="form-control" min="1" placeholder="输入要转账ㄋㄨㄛ金额">
+                    </div>
+                    <div class="form-group">
+                        <label for="receiver-qqid" class="form-label">接收方QQ号</label>
+                        <input type="text" id="receiver-qqid" class="form-control" placeholder="输入接收方ㄋㄨㄛQQ号码">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-note" class="form-label">备注 (可选)</label>
+                        <input type="text" id="payment-note" class="form-control" placeholder="输入转账备注">
+                    </div>
+                    
+                    <div class="form-group" style="background-color: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="margin-bottom: 5px; color: var(--text-light); font-size: 0.9rem;">交易税率: <span id="tax-rate-display">3%</span></p>
+                        <p style="font-weight: 500;">实际扣除: <span id="actual-deduction">0</span> <span id="deduction-currency-symbol">¥</span></p>
+                    </div>
+                    
+                    <button id="generate-btn" class="btn">生成支付码</button>
+                    
+                    <div class="code-container" id="payment-code-container" style="display: none;">
+                        <button class="copy-btn" id="copy-payment-btn"><i class="fas fa-copy"></i> 复制</button>
+                        <div class="code-text" id="payment-code"></div>
+                    </div>
+                </div>
+                
+                <!-- 接收支付页面 -->
+                <div id="receive-page" class="page" style="display: none;">
+                    <h3 class="section-title">接收支付</h3>
+                    
+                    <div class="paste-area" id="paste-area">
+                        <div class="paste-icon"><i class="fas fa-paste"></i></div>
+                        <p>点击粘贴支付码或直接在下方输入</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payment-code-input" class="form-label">支付码</label>
+                        <textarea id="payment-code-input" class="form-control" rows="5" placeholder="粘贴对方提供的支付码"></textarea>
+                    </div>
+                    
+                    <button id="verify-btn" class="btn">验证并接收支付</button>
+                    
+                    <div class="code-container" id="verification-result" style="display: none;">
+                        <div id="verification-message"></div>
+                    </div>
+                </div>
+                
+                <!-- 交易记录页面 -->
+                <div id="history-page" class="page" style="display: none;">
+                    <h3 class="section-title">交易记录</h3>
+                    
+                    <div id="transactions-list"></div>
+                </div>
+                
+                <!-- 仓库页面 -->
+                <div id="warehouse-page" class="page" style="display: none;">
+                    <div class="warehouse-header">
+                        <button class="warehouse-back" id="warehouse-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3>我的仓库</h3>
+                        <button class="warehouse-add" id="warehouse-add-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    
+                    <div class="warehouse-container" id="warehouse-container">
+                        <div class="no-cards-message">仓库空空</div>
+                    </div>
+                </div>
+                
+                <!-- 物品类别页面 -->
+                <div id="category-page" class="page" style="display: none;">
+                    <div class="category-header">
+                        <button class="category-back" id="category-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3 id="category-title">物品类别</h3>
+                        <button class="category-add" id="category-add-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    
+                    <div class="category-container" id="category-container">
+                        <div class="no-cards-message">仓库空空</div>
+                    </div>
+                </div>
+                
+                <!-- 物品详情页面 -->
+                <div id="item-detail-page" class="page" style="display: none;">
+                    <div class="item-detail-header">
+                        <button class="item-detail-back" id="item-detail-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3 id="item-detail-title">物品详情</h3>
+                        <div style="width: 24px;"></div> <!-- 占位符，保持标题居中 -->
+                    </div>
+                    
+                    <div class="item-detail-card" id="item-detail-card">
+                        <div class="item-detail-title" id="detail-item-name">物品名称</div>
+                        <div class="item-detail-info" id="item-detail-info">
+                            <!-- 动态填充物品详情 -->
+                        </div>
+                    </div>
+                    
+                    <div id="transfer-amount-section" style="display: none;">
+                        <div class="form-group transfer-amount-input">
+                            <label for="transfer-amount" class="form-label">转让数量</label>
+                            <input type="number" id="transfer-amount" class="form-control" min="1" placeholder="输入要转让的数量">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="transfer-item-btn" style="margin-bottom: 15px; background-color: var(--secondary);">转让物品</button>
+                    <button class="btn" id="delete-item-btn" style="background-color: var(--danger);">删除物品</button>
+                </div>
+                
+                <!-- 模组页面 -->
+                <div id="mods-page" class="page" style="display: none;">
+                    <div class="mods-header">
+                        <button class="mods-back" id="mods-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3>模组管理</h3>
+                        <button class="mods-add" id="mods-add-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    
+                    <div class="mods-container" id="mods-container">
+                        <div class="no-cards-message">暂无模组</div>
+                    </div>
+                </div>
+                
+                <!-- 模组详情页面 -->
+                <div id="mod-detail-page" class="page" style="display: none;">
+                    <div class="mod-detail-header">
+                        <button class="mod-detail-back" id="mod-detail-back-btn"><i class="fas fa-arrow-left"></i></button>
+                        <h3 id="mod-detail-title">模组详情</h3>
+                        <div style="width: 24px;"></div> <!-- 占位符，保持标题居中 -->
+                    </div>
+                    
+                    <div class="mod-detail-card" id="mod-detail-card">
+                        <div class="mod-detail-title" id="detail-mod-name">模组名称</div>
+                        <div class="mod-detail-info" id="mod-detail-info">
+                            <!-- 动态填充模组详情 -->
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="uninstall-mod-btn" style="margin-bottom: 15px; background-color: var(--danger);">卸载模组</button>
+                </div>
+            </div>
+            
+            <!-- 底部导航 -->
+            <div class="bottom-nav">
+                <a href="#" class="nav-item active" data-page="wallet">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    <div>首页</div>
+                </a>
+                <a href="#" class="nav-item" data-page="generate">
+                    <div class="nav-icon"><i class="fas fa-paper-plane"></i></div>
+                    <div>转账</div>
+                </a>
+                <a href="#" class="nav-item" data-page="warehouse">
+                    <div class="nav-icon"><i class="fas fa-warehouse"></i></div>
+                    <div>仓库</div>
+                </a>
+                <a href="#" class="nav-item" data-page="history">
+                    <div class="nav-icon"><i class="fas fa-history"></i></div>
+                    <div>记录</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 弹窗 -->
+        <div class="modal" id="alert-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="alert-title">提示</div>
+                    <button class="modal-close" id="alert-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p id="alert-message"></p>
+                    <button class="btn" id="alert-confirm-btn" style="margin-top: 20px;">确定</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 关于弹窗 -->
+        <div class="modal" id="about-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">关于系统</div>
+                    <button class="modal-close" id="about-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <h4 style="margin-bottom: 15px;">虚拟国家货币模拟系统 v1.0</h4>
+                    <p style="margin-bottom: 10px;">该软件由晨曦东亚 & PVSO和平化虚拟国组织制作。</p>
+                    <p style="margin-bottom: 15px;">在软件更新前，请先生成并复制导出码，以备账户数据丢失。
+                    <p style="margin-bottom: 10px;">账户数据因各种原因丢失可以添加官方钉钉号：xuniguo123。</p>
+                    <p style="margin-bottom: 10px;">每笔交易收取的交易税销毁处理，防止通货膨胀，保证货币长期稳定。</p>
+                    <p style="margin-bottom: 15px;">系统搭载防伪码、防重复使用、时间验证。
+                    <p style="margin-bottom: 15px;">本软件开发成本约为396元（主要为人力成本＋技术成本）（实际花费成本低）。
+                    <p style="margin-bottom: 15px;">本软件正式版开发时间约201天。
+                    <p style="margin-bottom: 15px;">官方提供特殊数字纪念币购买，各种纪念币铸币数量极少，可供收藏。
+                    <p style="margin-bottom: 15px;">网络国家入驻本软件，添加币种免费；个人或国家下的地区或组织等，申请铸造币种需要额外交少量的服务费，以供软件回本。
+                    <p style="margin-bottom: 15px;">更新前请导出数据码，以备数据丢失；更新无需删除原本安装包，也不推荐删除，否则数据丢失概率会提高约30%。
+                    <p style="margin-bottom: 15px;">提示：所展示内容与现实无任何关联，与现实货币不挂钩，仅用与模拟国家活动用处
+本系统不涉及任何真实货币交易，不提供任何形式的兑换服务，不具备任何现实经济价值。
+根据**中华人民共和国相关法律法规**，本系统严格遵循以下规定：  
+
+- 《中华人民共和国中国人民银行法》第20条 
+  > 任何单位和个人不得印制、发售代币票券，以代替人民币在市场上流通。  
+  - 本系统合规性：本系统不发行任何具有现实价值的代币，所有货币仅为虚拟模拟数据，不与人民币挂钩。  
+
+- 《关于防范代币发行融资风险的公告》 
+  > 任何组织和个人不得非法从事代币发行融资活动。  
+  - 本系统合规性：本系统不涉及融资、投资或任何形式的金融交易，仅用于模拟实验。  
+
+- 《网络游戏管理暂行办法》 
+  > 网络游戏虚拟货币的使用范围仅限于兑换自身提供的网络游戏产品和服务。  
+  - 本系统合规性：本系统不提供任何兑换服务，所有数据仅用于模拟用途。
+  <p style="margin-bottom: 15px;">申请入驻软件，添加币种请联系官方。
+  <p style="margin-bottom: 15px;">任何矛盾与纠纷，若当事人所在国家或地区无法处理或对处理结果不满，可以联系官方，由官方依规依德处置。
+  <p style="margin-bottom: 15px;">若用户对所在国或地区的币种兑换不信任或其他原因，可以寻找官方进行兑换。
+  <p style="margin-bottom: 15px;">请用户遵循所在国的经济制度法规。
+  <p style="margin-bottom: 15px;">在任何国家的经济货币相关规章没有影响世界经济稳定的情况下，该国经济规章不受本系统官方监督、整改。
+  <p style="margin-bottom: 15px;">请务必输入正确的QQ号，否则他人的转账可能无法正常收取。
+                    <div style="text-align: center; color: var(--text-light); font-size: 0.9rem;">
+                        <p>© 2025 PVSO虚拟国和平化组织</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 导入导出弹窗 -->
+        <div class="modal" id="data-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="data-modal-title">导出数据</div>
+                    <button class="modal-close" id="data-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div id="export-section">
+                        <p>复制以下数据以备份:</p>
+                        <textarea id="export-data-text" class="form-control" rows="5" readonly style="margin: 10px 0;"></textarea>
+                        <button class="btn" id="copy-export-btn"><i class="fas fa-copy"></i> 复制数据</button>
+                    </div>
+                    <div id="import-section" style="display: none;">
+                        <p>粘贴之前导出的数据:</p>
+                        <textarea id="import-data-text" class="form-control" rows="5" style="margin: 10px 0;"></textarea>
+                        <button class="btn" id="confirm-import-btn"><i class="fas fa-check"></i> 确认导入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 添加卡片弹窗 -->
+        <div class="modal" id="add-card-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">添加卡片</div>
+                    <button class="modal-close" id="add-card-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="card-code-input" class="form-label">增卡码</label>
+                        <textarea id="card-code-input" class="form-control" rows="5" placeholder="输入增卡码"></textarea>
+                    </div>
+                    <button class="btn" id="confirm-add-card-btn">添加卡片</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 添加类别弹窗 -->
+        <div class="modal" id="add-category-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">添加类别</div>
+                    <button class="modal-close" id="add-category-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="category-code-input" class="form-label">扩类码</label>
+                        <textarea id="category-code-input" class="form-control" rows="5" placeholder="输入扩类码"></textarea>
+                    </div>
+                    <button class="btn" id="confirm-add-category-btn">添加类别</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 添加物品弹窗 -->
+        <div class="modal" id="add-item-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">添加物品</div>
+                    <button class="modal-close" id="add-item-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="item-code-input" class="form-label">物品码</label>
+                        <textarea id="item-code-input" class="form-control" rows="5" placeholder="输入物品码"></textarea>
+                    </div>
+                    <button class="btn" id="confirm-add-item-btn">添加物品</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 添加模组弹窗 -->
+        <div class="modal" id="add-mod-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">添加模组</div>
+                    <button class="modal-close" id="add-mod-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="mod-code-input" class="form-label">模组码</label>
+                        <textarea id="mod-code-input" class="form-control" rows="5" placeholder="输入模组码"></textarea>
+                    </div>
+                    <button class="btn" id="confirm-add-mod-btn">添加模组</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 转让货币弹窗 -->
+        <div class="modal" id="transfer-currency-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">转让货币卡</div>
+                    <button class="modal-close" id="transfer-currency-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="transfer-currency-amount" class="form-label">转让金额</label>
+                        <input type="number" id="transfer-currency-amount" class="form-control" placeholder="输入要转让的金额">
+                    </div>
+                    <div class="form-group">
+                        <label for="transfer-currency-timedate" class="form-label">时间戳</label>
+                        <input type="number" id="transfer-currency-timedate" class="form-control" placeholder="输入生成用的时间戳">
+                    </div>
+                    <div class="form-group">
+                        <label for="transfer-currency-receiver" class="form-label">接收方QQ号</label>
+                        <input type="text" id="transfer-currency-receiver" class="form-control" placeholder="输入接收方的QQ号码">
+                    </div>
+                    <button class="btn" id="generate-transfer-currency-btn">生成转卡码</button>
+                    
+                    <div class="code-container" id="transfer-currency-code-container" style="display: none; margin-top: 20px;">
+                        <button class="copy-btn" id="copy-transfer-currency-btn"><i class="fas fa-copy"></i> 复制</button>
+                        <div class="code-text" id="transfer-currency-code"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 转让物品弹窗 -->
+        <div class="modal" id="transfer-item-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">转让物品</div>
+                    <button class="modal-close" id="transfer-item-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div id="transfer-item-info"></div>
+                    <div class="form-group">
+                        <label for="transfer-item-receiver" class="form-label">官方提醒，经过内测版本的多名用户反馈，目前请勿转让物品，该模式有众多bug未修整，转让物品会无法接收，且丢失！！！如需变卖物品，请询问当地经济部门或询问软件官方或等待软件新版本的发布！</label>
+                        <input type="text" id="transfer-item-receiver" class="form-control" placeholder="输入接收方的QQ号码">
+                    </div>
+                    <button class="btn" id="generate-transfer-item-btn">生成转物码</button>
+                    
+                    <div class="code-container" id="transfer-item-code-container" style="display: none; margin-top: 20px;">
+                        <button class="copy-btn" id="copy-transfer-item-btn"><i class="fas fa-copy"></i> 复制</button>
+                        <div class="code-text" id="transfer-item-code"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 删除卡片确认弹窗 -->
+        <div class="modal" id="delete-card-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">确认注销</div>
+                    <button class="modal-close" id="delete-card-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-card-message">确定要注销此卡片吗？</p>
+                    <button class="btn btn-secondary" id="cancel-delete-card-btn">取消</button>
+                    <button class="btn" id="confirm-delete-card-btn" style="margin-top: 10px; background-color: var(--danger);">确认注销</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 删除物品确认弹窗 -->
+        <div class="modal" id="delete-item-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">确认删除</div>
+                    <button class="modal-close" id="delete-item-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-item-message">确定要删除此物品吗？删除后该物品将消失！</p>
+                    <button class="btn btn-secondary" id="cancel-delete-item-btn">取消</button>
+                    <button class="btn" id="confirm-delete-item-btn" style="margin-top: 10px; background-color: var(--danger);">确认删除</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 卸载模组确认弹窗 -->
+        <div class="modal" id="uninstall-mod-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">确认卸载</div>
+                    <button class="modal-close" id="uninstall-mod-close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p id="uninstall-mod-message">确定要卸载此模组吗？卸载后模组功能将失效！</p>
+                    <button class="btn btn-secondary" id="cancel-uninstall-mod-btn">取消</button>
+                    <button class="btn" id="confirm-uninstall-mod-btn" style="margin-top: 10px; background-color: var(--danger);">确认卸载</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let userData = {
+            qqid: '',
+            currencies: {}, // 存储所有货币数据
+            defaultCurrency: '济明币', // 默认货币
+            transactions: [],
+            usedCodes: [], // 已使用的支付码
+            usedItemCodes: [], // 已使用的物品码
+            usedModCodes: [], // 已使用的模组码
+            warehouse: {}, // 仓库数据
+            mods: {} // 模组数据
+        };
+        
+        // 默认货币数据
+        const defaultCurrencyData = {
+            '济明币': {
+                balance: 0,
+                totalTax: 0,
+                symbol: '亻',
+                color: '#7b2cbf',
+                taxRate: 0.03,
+                issuer: '晨曦东亚 & PVSO和平化虚拟国组织',
+                supervisor: '晨曦东亚经济部'
+            }
+        };
+        
+        // 当前查看的货币详情
+        let currentCurrencyDetail = null;
+        // 当前查看的仓库类别
+        let currentCategory = null;
+        // 当前查看的物品
+        let currentItem = null;
+        // 当前查看的模组
+        let currentMod = null;
+        // 当前要操作的卡片
+        let currentCardToDelete = null;
+        let currentCardToSetDefault = null;
+        let currentItemToDelete = null;
+        let currentModToUninstall = null;
+        
+        // DOM元素
+        const loader = document.getElementById('loader');
+        const setupPage = document.getElementById('setup-page');
+        const mainPage = document.getElementById('main-page');
+        const setupBtn = document.getElementById('setup-btn');
+        const qqidInput = document.getElementById('setup-qqid');
+        const regCodeInput = document.getElementById('setup-regcode');
+        const displayQqid = document.getElementById('display-qqid');
+        const currentBalance = document.getElementById('current-balance');
+        const totalTaxElement = document.getElementById('total-tax');
+        const currencySymbol = document.getElementById('currency-symbol');
+        const taxCurrencySymbol = document.getElementById('tax-currency-symbol');
+        const walletCurrencyName = document.getElementById('wallet-currency-name');
+        const taxCurrencyName = document.getElementById('tax-currency-name');
+        const resetBtn = document.getElementById('reset-btn');
+        const generateBtn = document.getElementById('generate-btn');
+        const amountInput = document.getElementById('amount');
+        const receiverQqidInput = document.getElementById('receiver-qqid');
+        const paymentNoteInput = document.getElementById('payment-note');
+        const actualDeductionElement = document.getElementById('actual-deduction');
+        const deductionCurrencySymbol = document.getElementById('deduction-currency-symbol');
+        const taxRateDisplay = document.getElementById('tax-rate-display');
+        const paymentCodeContainer = document.getElementById('payment-code-container');
+        const paymentCode = document.getElementById('payment-code');
+        const copyPaymentBtn = document.getElementById('copy-payment-btn');
+        const paymentCodeInput = document.getElementById('payment-code-input');
+        const verifyBtn = document.getElementById('verify-btn');
+        const verificationResult = document.getElementById('verification-result');
+        const verificationMessage = document.getElementById('verification-message');
+        const transactionsList = document.getElementById('transactions-list');
+        const recentTransactions = document.getElementById('recent-transactions');
+        const menuBtn = document.getElementById('menu-btn');
+        const menuCloseBtn = document.getElementById('menu-close-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const alertModal = document.getElementById('alert-modal');
+        const alertTitle = document.getElementById('alert-title');
+        const alertMessage = document.getElementById('alert-message');
+        const alertCloseBtn = document.getElementById('alert-close-btn');
+        const alertConfirmBtn = document.getElementById('alert-confirm-btn');
+        const aboutModal = document.getElementById('about-modal');
+        const aboutCloseBtn = document.getElementById('about-close-btn');
+        const aboutBtn = document.getElementById('about-btn');
+        const dataModal = document.getElementById('data-modal');
+        const dataModalTitle = document.getElementById('data-modal-title');
+        const dataCloseBtn = document.getElementById('data-close-btn');
+        const exportSection = document.getElementById('export-section');
+        const importSection = document.getElementById('import-section');
+        const exportDataText = document.getElementById('export-data-text');
+        const importDataText = document.getElementById('import-data-text');
+        const copyExportBtn = document.getElementById('copy-export-btn');
+        const confirmImportBtn = document.getElementById('confirm-import-btn');
+        const exportDataBtn = document.getElementById('export-data');
+        const importDataBtn = document.getElementById('import-data');
+        const pasteArea = document.getElementById('paste-area');
+        const pages = document.querySelectorAll('.page');
+        const navItems = document.querySelectorAll('.nav-item');
+        const menuItems = document.querySelectorAll('.menu-item');
+        const actionButtons = document.querySelectorAll('.action-btn');
+        const moreCardsBtn = document.getElementById('more-cards-btn');
+        const moreCardsPage = document.getElementById('more-cards-page');
+        const moreCardsBackBtn = document.getElementById('more-cards-back-btn');
+        const moreCardsAddBtn = document.getElementById('more-cards-add-btn');
+        const moreCardsContainer = document.getElementById('more-cards-container');
+        const currencySelect = document.getElementById('currency-select');
+        const addCardModal = document.getElementById('add-card-modal');
+        const addCardCloseBtn = document.getElementById('add-card-close-btn');
+        const cardCodeInput = document.getElementById('card-code-input');
+        const confirmAddCardBtn = document.getElementById('confirm-add-card-btn');
+        const deleteCardModal = document.getElementById('delete-card-modal');
+        const deleteCardCloseBtn = document.getElementById('delete-card-close-btn');
+        const deleteCardMessage = document.getElementById('delete-card-message');
+        const cancelDeleteCardBtn = document.getElementById('cancel-delete-card-btn');
+        const confirmDeleteCardBtn = document.getElementById('confirm-delete-card-btn');
+        const currencyDetailPage = document.getElementById('currency-detail-page');
+        const currencyDetailBackBtn = document.getElementById('currency-detail-back-btn');
+        const currencyDetailCard = document.getElementById('currency-detail-card');
+        const detailCurrencyName = document.getElementById('detail-currency-name');
+        const detailIssuer = document.getElementById('detail-issuer');
+        const detailTaxRate = document.getElementById('detail-tax-rate');
+        const detailSupervisor = document.getElementById('detail-supervisor');
+        const detailBalance = document.getElementById('detail-balance');
+        const detailSymbol = document.getElementById('detail-symbol');
+        const detailTotalTax = document.getElementById('detail-total-tax');
+        const detailTaxSymbol = document.getElementById('detail-tax-symbol');
+        const setDefaultBtn = document.getElementById('set-default-btn');
+        const transferCurrencyBtn = document.getElementById('transfer-currency-btn');
+        const deleteCurrencyBtn = document.getElementById('delete-currency-btn');
+        
+        // 仓库相关元素
+        const warehousePage = document.getElementById('warehouse-page');
+        const warehouseBackBtn = document.getElementById('warehouse-back-btn');
+        const warehouseAddBtn = document.getElementById('warehouse-add-btn');
+        const warehouseContainer = document.getElementById('warehouse-container');
+        
+        // 类别相关元素
+        const categoryPage = document.getElementById('category-page');
+        const categoryBackBtn = document.getElementById('category-back-btn');
+        const categoryAddBtn = document.getElementById('category-add-btn');
+        const categoryTitle = document.getElementById('category-title');
+        const categoryContainer = document.getElementById('category-container');
+        
+        // 物品相关元素
+        const itemDetailPage = document.getElementById('item-detail-page');
+        const itemDetailBackBtn = document.getElementById('item-detail-back-btn');
+        const itemDetailTitle = document.getElementById('item-detail-title');
+        const itemDetailCard = document.getElementById('item-detail-card');
+        const itemDetailInfo = document.getElementById('item-detail-info');
+        const transferAmountSection = document.getElementById('transfer-amount-section');
+        const transferAmountInput = document.getElementById('transfer-amount');
+        const transferItemBtn = document.getElementById('transfer-item-btn');
+        const deleteItemBtn = document.getElementById('delete-item-btn');
+        
+        // 模组相关元素
+        const modsPage = document.getElementById('mods-page');
+        const modsBackBtn = document.getElementById('mods-back-btn');
+        const modsAddBtn = document.getElementById('mods-add-btn');
+        const modsContainer = document.getElementById('mods-container');
+        const modDetailPage = document.getElementById('mod-detail-page');
+        const modDetailBackBtn = document.getElementById('mod-detail-back-btn');
+        const modDetailTitle = document.getElementById('mod-detail-title');
+        const modDetailCard = document.getElementById('mod-detail-card');
+        const modDetailInfo = document.getElementById('mod-detail-info');
+        const uninstallModBtn = document.getElementById('uninstall-mod-btn');
+        
+        // 弹窗相关元素
+        const addCategoryModal = document.getElementById('add-category-modal');
+        const addCategoryCloseBtn = document.getElementById('add-category-close-btn');
+        const categoryCodeInput = document.getElementById('category-code-input');
+        const confirmAddCategoryBtn = document.getElementById('confirm-add-category-btn');
+        
+        const addItemModal = document.getElementById('add-item-modal');
+        const addItemCloseBtn = document.getElementById('add-item-close-btn');
+        const itemCodeInput = document.getElementById('item-code-input');
+        const confirmAddItemBtn = document.getElementById('confirm-add-item-btn');
+        
+        const addModModal = document.getElementById('add-mod-modal');
+        const addModCloseBtn = document.getElementById('add-mod-close-btn');
+        const modCodeInput = document.getElementById('mod-code-input');
+        const confirmAddModBtn = document.getElementById('confirm-add-mod-btn');
+        
+        const transferCurrencyModal = document.getElementById('transfer-currency-modal');
+        const transferCurrencyCloseBtn = document.getElementById('transfer-currency-close-btn');
+        const transferCurrencyAmount = document.getElementById('transfer-currency-amount');
+        const transferCurrencyTimedate = document.getElementById('transfer-currency-timedate');
+        const transferCurrencyReceiver = document.getElementById('transfer-currency-receiver');
+        const generateTransferCurrencyBtn = document.getElementById('generate-transfer-currency-btn');
+        const transferCurrencyCodeContainer = document.getElementById('transfer-currency-code-container');
+        const transferCurrencyCode = document.getElementById('transfer-currency-code');
+        const copyTransferCurrencyBtn = document.getElementById('copy-transfer-currency-btn');
+        
+        const transferItemModal = document.getElementById('transfer-item-modal');
+        const transferItemCloseBtn = document.getElementById('transfer-item-close-btn');
+        const transferItemInfo = document.getElementById('transfer-item-info');
+        const transferItemReceiver = document.getElementById('transfer-item-receiver');
+        const generateTransferItemBtn = document.getElementById('generate-transfer-item-btn');
+        const transferItemCodeContainer = document.getElementById('transfer-item-code-container');
+        const transferItemCode = document.getElementById('transfer-item-code');
+        const copyTransferItemBtn = document.getElementById('copy-transfer-item-btn');
+        
+        const deleteItemModal = document.getElementById('delete-item-modal');
+        const deleteItemCloseBtn = document.getElementById('delete-item-close-btn');
+        const deleteItemMessage = document.getElementById('delete-item-message');
+        const cancelDeleteItemBtn = document.getElementById('cancel-delete-item-btn');
+        const confirmDeleteItemBtn = document.getElementById('confirm-delete-item-btn');
+        
+        const uninstallModModal = document.getElementById('uninstall-mod-modal');
+        const uninstallModCloseBtn = document.getElementById('uninstall-mod-close-btn');
+        const uninstallModMessage = document.getElementById('uninstall-mod-message');
+        const cancelUninstallModBtn = document.getElementById('cancel-uninstall-mod-btn');
+        const confirmUninstallModBtn = document.getElementById('confirm-uninstall-mod-btn');
+        
+        const generateRegcodeBtn = document.getElementById('generate-regcode-btn');
+        const generateRegcodeModal = document.getElementById('generate-regcode-modal');
+        const regcodeCloseBtn = document.getElementById('regcode-close-btn');
+        const generateRegcodeConfirm = document.getElementById('generate-regcode-confirm');
+        const copyRegcodeBtn = document.getElementById('copy-regcode-btn');
+        const regcodeResult = document.getElementById('regcode-result');
+        const regcodeText = document.getElementById('regcode-text');
+        
+        // 初始化
+        function init() {
+            // 先确保加载界面可见
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            
+            // 模拟加载过程
+            setTimeout(() => {
+                // 检查本地存储
+                try {
+                    const savedData = localStorage.getItem('simCurrencyData');
+                    if (savedData) {
+                        const parsedData = JSON.parse(savedData);
+                        
+                        // 兼容旧版本数据
+                        if (!parsedData.currencies) {
+                            // 旧版本数据迁移
+                   // 修改初始化部分
+userData = {
+    qqid: parsedData.qqid,
+    currencies: {
+        '济明币': {
+            balance: parsedData.balance || 0,
+            totalTax: parsedData.totalTax || 0,
+            symbol: '亻',
+            color: '#7b2cbf',
+            taxRate: 0.03,
+            issuer: '晨曦东亚 & PVSO和平化虚拟国组织',
+            supervisor: '晨曦东亚经济部'
+        }
+    },
+    defaultCurrency: '济明币',
+    transactions: parsedData.transactions || [],
+    usedCodes: parsedData.usedCodes || [],
+    usedItemCodes: parsedData.usedItemCodes || [],
+    usedModCodes: parsedData.usedModCodes || [],
+    warehouse: parsedData.warehouse || { '证件卡包': [] }, // 添加默认类别
+    mods: parsedData.mods || {}
+};
+                        } else {
+                            userData = parsedData;
+                        }
+                        
+                        setupPage.style.display = 'none';
+                        mainPage.style.display = 'block';
+                        updateUI();
+                        showPage('wallet');
+                        updateCurrencySelect();
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved data:', e);
+                    localStorage.removeItem('simCurrencyData');
+                }
+                
+                // 隐藏加载界面
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }, 1000); // 保持1秒加载时间
+            
+            // 设置事件监听器
+            setupBtn.addEventListener('click', setupAccount);
+            resetBtn.addEventListener('click', showResetConfirm);
+            generateBtn.addEventListener('click', generatePaymentCode);
+            copyPaymentBtn.addEventListener('click', copyPaymentCode);
+            verifyBtn.addEventListener('click', verifyPaymentCode);
+            menuBtn.addEventListener('click', toggleMenu);
+            menuCloseBtn.addEventListener('click', toggleMenu);
+            alertCloseBtn.addEventListener('click', closeAlert);
+            alertConfirmBtn.addEventListener('click', closeAlert);
+            aboutCloseBtn.addEventListener('click', () => aboutModal.classList.remove('show'));
+            aboutBtn.addEventListener('click', () => aboutModal.classList.add('show'));
+            dataCloseBtn.addEventListener('click', () => dataModal.classList.remove('show'));
+            exportDataBtn.addEventListener('click', showExportData);
+            importDataBtn.addEventListener('click', showImportData);
+            copyExportBtn.addEventListener('click', copyExportData);
+            confirmImportBtn.addEventListener('click', confirmImportData);
+            pasteArea.addEventListener('click', () => paymentCodeInput.focus());
+            amountInput.addEventListener('input', calculateActualDeduction);
+            moreCardsBtn.addEventListener('click', showMoreCards);
+            moreCardsBackBtn.addEventListener('click', backToWallet);
+            moreCardsAddBtn.addEventListener('click', showAddCardModal);
+            addCardCloseBtn.addEventListener('click', () => addCardModal.classList.remove('show'));
+            confirmAddCardBtn.addEventListener('click', addNewCard);
+            deleteCardCloseBtn.addEventListener('click', () => deleteCardModal.classList.remove('show'));
+            cancelDeleteCardBtn.addEventListener('click', () => deleteCardModal.classList.remove('show'));
+            confirmDeleteCardBtn.addEventListener('click', confirmDeleteCard);
+            currencyDetailBackBtn.addEventListener('click', backToWallet);
+            setDefaultBtn.addEventListener('click', setCurrentCurrencyAsDefault);
+            transferCurrencyBtn.addEventListener('click', () => showAlert('提示', '转让货币卡功能正在开发中'));
+            deleteCurrencyBtn.addEventListener('click', showDeleteCurrentCurrencyConfirm);
+            
+            // 仓库相关事件
+            warehouseBackBtn.addEventListener('click', backToWallet);
+            warehouseAddBtn.addEventListener('click', showAddCategoryModal);
+            
+            // 类别相关事件
+            categoryBackBtn.addEventListener('click', backToWarehouse);
+            categoryAddBtn.addEventListener('click', showAddItemModal);
+            
+            // 物品详情相关事件
+            itemDetailBackBtn.addEventListener('click', backToCategory);
+            transferItemBtn.addEventListener('click', showTransferItemModal);
+            deleteItemBtn.addEventListener('click', showDeleteItemConfirm);
+            
+            // 模组相关事件
+            modsBackBtn.addEventListener('click', backToWallet);
+            modsAddBtn.addEventListener('click', showAddModModal);
+            modDetailBackBtn.addEventListener('click', backToMods);
+            uninstallModBtn.addEventListener('click', showUninstallModConfirm);
+            
+            // 弹窗相关事件
+            addCategoryCloseBtn.addEventListener('click', () => addCategoryModal.classList.remove('show'));
+            confirmAddCategoryBtn.addEventListener('click', addNewCategory);
+            addItemCloseBtn.addEventListener('click', () => addItemModal.classList.remove('show'));
+            confirmAddItemBtn.addEventListener('click', addNewItem);
+            addModCloseBtn.addEventListener('click', () => addModModal.classList.remove('show'));
+            confirmAddModBtn.addEventListener('click', addNewMod);
+            transferCurrencyCloseBtn.addEventListener('click', () => transferCurrencyModal.classList.remove('show'));
+            generateTransferCurrencyBtn.addEventListener('click', generateTransferCurrencyCode);
+            copyTransferCurrencyBtn.addEventListener('click', copyTransferCurrencyCode);
+            transferItemCloseBtn.addEventListener('click', () => transferItemModal.classList.remove('show'));
+            generateTransferItemBtn.addEventListener('click', generateTransferItemCode);
+            copyTransferItemBtn.addEventListener('click', copyTransferItemCode);
+            deleteItemCloseBtn.addEventListener('click', () => deleteItemModal.classList.remove('show'));
+            cancelDeleteItemBtn.addEventListener('click', () => deleteItemModal.classList.remove('show'));
+            confirmDeleteItemBtn.addEventListener('click', confirmDeleteItem);
+            uninstallModCloseBtn.addEventListener('click', () => uninstallModModal.classList.remove('show'));
+            cancelUninstallModBtn.addEventListener('click', () => uninstallModModal.classList.remove('show'));
+            confirmUninstallModBtn.addEventListener('click', confirmUninstallMod);
+            
+            // 导航切换
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.getAttribute('data-page');
+                    showPage(page);
+                    
+                    // 更新活动导航项
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+            
+            // 菜单项点击
+            menuItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.getAttribute('data-page');
+                    if (page) {
+                        showPage(page);
+                        toggleMenu();
+                        
+                        // 更新活动导航项
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+                    }
+                });
+            });
+            
+            // 快速操作按钮
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const page = btn.getAttribute('data-page');
+                    if (page) {
+                        showPage(page);
+                        
+                        // 更新活动导航项
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+                    }
+                });
+            });
+            
+            // 监听粘贴事件
+            paymentCodeInput.addEventListener('paste', (e) => {
+                setTimeout(() => {
+                    pasteArea.style.display = 'none';
+                }, 100);
+            });
+            
+            // 监听输入事件
+            paymentCodeInput.addEventListener('input', () => {
+                if (paymentCodeInput.value.trim()) {
+                    pasteArea.style.display = 'none';
+                } else {
+                    pasteArea.style.display = 'block';
+                }
+            });
+            
+            // 卡片点击事件
+            document.getElementById('main-wallet-card').addEventListener('click', () => {
+                showCurrencyDetail(userData.defaultCurrency);
+            });
+            
+            document.getElementById('main-tax-card').addEventListener('click', () => {
+                showCurrencyDetail(userData.defaultCurrency);
+            });
+            
+            // 卡片编辑按钮事件委托
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.card-edit-btn')) {
+                    const btn = e.target.closest('.card-edit-btn');
+                    const card = btn.closest('.wallet-card, .tax-card');
+                    const currencyName = card.querySelector('.wallet-currency, .tax-currency').textContent;
+                    
+                    if (btn.querySelector('.fa-star')) {
+                        // 设为默认卡片
+                        setDefaultCurrency(currencyName);
+                    } else if (btn.querySelector('.fa-exchange-alt')) {
+                        // 转让卡片
+                        showAlert('提示', '转让货币卡功能正在开发中');
+                    } else if (btn.querySelector('.fa-trash')) {
+                        // 删除卡片
+                        showDeleteCardConfirm(currencyName);
+                    }
+                }
+            });
+            
+            generateRegcodeBtn.addEventListener('click', () => {
+                generateRegcodeModal.classList.add('show');
+            });
+            
+            regcodeCloseBtn.addEventListener('click', () => {
+                generateRegcodeModal.classList.remove('show');
+            });
+            
+            generateRegcodeConfirm.addEventListener('click', generateRegcode);
+            
+            copyRegcodeBtn.addEventListener('click', copyRegcode);
+        }
+        
+        // 显示货币详情
+        function showCurrencyDetail(currencyName) {
+            if (!userData.currencies[currencyName]) return;
+            
+            currentCurrencyDetail = currencyName;
+            const currencyData = userData.currencies[currencyName];
+            
+            // 更新详情页面
+            detailCurrencyName.textContent = currencyName;
+            detailIssuer.textContent = currencyData.issuer || '未知发行商';
+            detailTaxRate.textContent = `${(currencyData.taxRate * 100).toFixed(0)}%`;
+            detailSupervisor.textContent = currencyData.supervisor || '未知监督组';
+            detailBalance.textContent = currencyData.balance.toFixed(2);
+            detailSymbol.textContent = currencyData.symbol;
+            detailTotalTax.textContent = currencyData.totalTax.toFixed(2);
+            detailTaxSymbol.textContent = currencyData.symbol;
+            
+            // 设置卡片背景
+            currencyDetailCard.style.background = `linear-gradient(135deg, ${currencyData.color}, ${lightenColor(currencyData.color, 20)})`;
+            
+            // 如果是默认货币，隐藏设为默认按钮
+            setDefaultBtn.style.display = currencyName === userData.defaultCurrency ? 'none' : 'block';
+            
+            showPage('currency-detail');
+        }
+        
+        // 将当前查看的货币设为默认
+        function setCurrentCurrencyAsDefault() {
+            if (currentCurrencyDetail) {
+                setDefaultCurrency(currentCurrencyDetail);
+                backToWallet();
+            }
+        }
+        
+        // 显示转让货币模态框
+        function showTransferCurrencyModal(currencyName = null) {
+            if (!currencyName && currentCurrencyDetail) {
+                currencyName = currentCurrencyDetail;
+            }
+            
+            if (!currencyName || !userData.currencies[currencyName]) return;
+            
+            const currencyData = userData.currencies[currencyName];
+            
+            // 重置表单
+            transferCurrencyAmount.value = '';
+            transferCurrencyReceiver.value = '';
+            transferCurrencyCodeContainer.style.display = 'none';
+            
+            // 设置最大可转让金额
+            transferCurrencyAmount.max = currencyData.balance;
+            transferCurrencyAmount.placeholder = `最大可转让: ${currencyData.balance.toFixed(2)}`;
+            
+            transferCurrencyModal.classList.add('show');
+        }
+        
+        // 生成转让货币码
+        function generateTransferCurrencyCode() {
+            const amount = parseFloat(transferCurrencyAmount.value);
+            const timedate_s = transferCurrencyTimedate.value;
+            let timestamp_ = Date.now()
+            if (timedate_s.length = 0) {
+              timestamp_ = parseInt(timedate_s);
+            }
+            const receiverQqid = transferCurrencyReceiver.value.trim();
+            const currencyName = currentCurrencyDetail || userData.defaultCurrency;
+            const currencyData = userData.currencies[currencyName];
+            
+            if (isNaN(amount) || amount <= 0) {
+                showAlert('错误', '请输入有效的转让金额');
+                return;
+            }
+            
+            if (amount > currencyData.balance) {
+                showAlert('错误', '转让金额不能超过当前余额');
+                return;
+            }
+            
+            if (!receiverQqid) {
+                showAlert('错误', '请输入接收方QQ号');
+                return;
+            }
+            
+            if (receiverQqid === userData.qqid) {
+                // showAlert('错误', '不能转让给自己');
+                // return;
+            }
+            
+            // 创建转让对象
+            const transferData = {
+                type: 'currency',
+                currency: currencyName,
+                amount: amount,
+                sender: userData.qqid,
+                receiver: receiverQqid,
+                timestamp: timestamp_,
+                symbol: currencyData.symbol,
+                color: currencyData.color,
+                taxRate: currencyData.taxRate,
+                issuer: currencyData.issuer,
+                supervisor: currencyData.supervisor
+            };
+            
+            // 生成转让码 (加密的JSON字符串)
+            const transferCodeText = encryptData(transferData);
+            
+            // 显示转让码
+            transferCurrencyCode.textContent = transferCodeText;
+            transferCurrencyCodeContainer.style.display = 'block';
+            
+            showAlert('成功', '转卡码已生成，请复制给对方');
+        }
+        
+        // 复制转让货币码
+        function copyTransferCurrencyCode() {
+            navigator.clipboard.writeText(transferCurrencyCode.textContent)
+                .then(() => {
+                    showAlert('成功', '转卡码已复制到剪贴板');
+                })
+                .catch(err => {
+                    console.error('复制失败:', err);
+                    showAlert('错误', '复制失败，请手动选择复制');
+                });
+        }
+        
+        // 显示删除当前货币确认
+        function showDeleteCurrentCurrencyConfirm() {
+            if (currentCurrencyDetail) {
+                showDeleteCardConfirm(currentCurrencyDetail);
+            }
+        }
+        
+        // 显示更多卡片页面
+        function showMoreCards() {
+            showPage('more-cards');
+            updateMoreCardsList();
+        }
+        
+        // 返回钱包页面
+        function backToWallet() {
+            showPage('wallet');
+        }
+        
+        // 更新更多卡片列表
+        function updateMoreCardsList() {
+            moreCardsContainer.innerHTML = '';
+            
+            const currencies = Object.keys(userData.currencies);
+            if (currencies.length <= 1) {
+                moreCardsContainer.innerHTML = '<div class="no-cards-message">未有其他卡片</div>';
+                return;
+            }
+            
+            currencies.forEach(currency => {
+                if (currency !== userData.defaultCurrency) {
+                    const currencyData = userData.currencies[currency];
+                    
+                    // 钱包卡片
+                    const walletCard = document.createElement('div');
+                    walletCard.className = 'wallet-card';
+                    walletCard.style.background = `linear-gradient(135deg, ${currencyData.color}, ${lightenColor(currencyData.color, 20)})`;
+                    walletCard.innerHTML = `
+                        <div class="wallet-title">${currency}余额</div>
+                        <div class="wallet-balance">${currencyData.balance.toFixed(2)} <span>${currencyData.symbol}</span></div>
+                        <div class="wallet-currency">${currency}</div>
+                        <div class="card-edit-mode">
+                            <button class="card-edit-btn" title="设为默认"><i class="fas fa-star"></i></button>
+                            <button class="card-edit-btn" title="转让卡片"><i class="fas fa-exchange-alt"></i></button>
+                            <button class="card-edit-btn" title="删除卡片"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    walletCard.addEventListener('click', () => showCurrencyDetail(currency));
+                    moreCardsContainer.appendChild(walletCard);
+                    
+                    // 税收卡片
+                    const taxCard = document.createElement('div');
+                    taxCard.className = 'tax-card';
+                    taxCard.style.background = `linear-gradient(135deg, ${darkenColor(currencyData.color, 20)}, ${darkenColor(currencyData.color, 40)})`;
+                    taxCard.innerHTML = `
+                        <div class="tax-title">${currency}税收</div>
+                        <div class="tax-amount">${currencyData.totalTax.toFixed(2)} <span>${currencyData.symbol}</span></div>
+                        <div class="tax-currency">${currency}</div>
+                        <div class="card-edit-mode">
+                            <button class="card-edit-btn" title="设为默认"><i class="fas fa-star"></i></button>
+                            <button class="card-edit-btn" title="转让卡片"><i class="fas fa-exchange-alt"></i></button>
+                            <button class="card-edit-btn" title="删除卡片"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    taxCard.addEventListener('click', () => showCurrencyDetail(currency));
+                    moreCardsContainer.appendChild(taxCard);
+                }
+            });
+        }
+        
+        // 显示添加卡片模态框
+        function showAddCardModal() {
+            cardCodeInput.value = '';
+            addCardModal.classList.add('show');
+        }
+        
+        // 添加新卡片
+        function addNewCard() {
+            const code = cardCodeInput.value.trim();
+            
+            if (!code) {
+                showAlert('错误', '请输入增卡码');
+                return;
+            }
+            
+            try {
+                // 解密增卡码
+                const cardData = decryptData(code);
+                
+                // 验证增卡码
+                if (!cardData || !cardData.currency || !cardData.symbol || !cardData.color || cardData.taxRate === undefined) {
+                    showAlert('错误', '无效的增卡码');
+                    return;
+                }
+                
+                // 检查是否已存在该货币
+                if (userData.currencies[cardData.currency]) {
+                    showAlert('错误', '您已经拥有该货币的卡片');
+                    return;
+                }
+                
+                // 添加新货币
+                userData.currencies[cardData.currency] = {
+                    balance: cardData.initialBalance || 0,
+                    totalTax: 0,
+                    symbol: cardData.symbol,
+                    color: cardData.color,
+                    taxRate: cardData.taxRate,
+                    issuer: cardData.issuer || '未知发行商',
+                    supervisor: cardData.supervisor || '未知监督组'
+                };
+                
+                saveData();
+                updateUI();
+                updateMoreCardsList();
+                updateCurrencySelect();
+                addCardModal.classList.remove('show');
+                
+                showAlert('成功', `已成功添加${cardData.currency}卡片`);
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('错误', '增卡码验证失败');
+            }
+        }
+        
+        // 显示删除卡片确认
+        function showDeleteCardConfirm(currencyName) {
+            if (currencyName === userData.defaultCurrency) {
+                showAlert('错误', '不能删除默认货币卡片');
+                return;
+            }
+            
+            currentCardToDelete = currencyName;
+            deleteCardMessage.textContent = `确定要删除${currencyName}的所有卡片吗？删除后该货币的所有数据将丢失！`;
+            deleteCardModal.classList.add('show');
+        }
+        
+        // 确认删除卡片
+        function confirmDeleteCard() {
+            if (currentCardToDelete) {
+                // 删除货币
+                delete userData.currencies[currentCardToDelete];
+                
+                // 过滤掉该货币的交易记录
+                userData.transactions = userData.transactions.filter(t => 
+                    !t.currency || t.currency !== currentCardToDelete
+                );
+                
+                saveData();
+                updateUI();
+                updateMoreCardsList();
+                updateCurrencySelect();
+                deleteCardModal.classList.remove('show');
+                
+                showAlert('成功', `已删除${currentCardToDelete}的所有卡片`);
+                currentCardToDelete = null;
+                
+                // 如果是在详情页面删除的，返回钱包页面
+                if (currentCurrencyDetail === currentCardToDelete) {
+                    backToWallet();
+                }
+            }
+        }
+        
+        // 设置默认货币
+        function setDefaultCurrency(currencyName) {
+            if (userData.currencies[currencyName]) {
+                userData.defaultCurrency = currencyName;
+                saveData();
+                updateUI();
+                updateMoreCardsList();
+                showAlert('成功', `已将${currencyName}设为默认货币`);
+            }
+        }
+        
+        // 更新货币选择下拉框
+        function updateCurrencySelect() {
+            currencySelect.innerHTML = '';
+            
+            Object.keys(userData.currencies).forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.textContent = currency;
+                if (currency === userData.defaultCurrency) {
+                    option.selected = true;
+                }
+                currencySelect.appendChild(option);
+            });
+            
+            // 更新税率显示
+            updateTaxRateDisplay();
+        }
+        
+        // 更新税率显示
+        function updateTaxRateDisplay() {
+            const selectedCurrency = currencySelect.value;
+            if (userData.currencies[selectedCurrency]) {
+                const taxRate = userData.currencies[selectedCurrency].taxRate * 100;
+                taxRateDisplay.textContent = `${taxRate}%`;
+                deductionCurrencySymbol.textContent = userData.currencies[selectedCurrency].symbol;
+            }
+        }
+        
+        // 计算实际扣除金额（含税计算）
+        function calculateActualDeduction() {
+            const amount = parseFloat(amountInput.value);
+            const selectedCurrency = currencySelect.value;
+            
+            if (isNaN(amount) || amount < 0) {
+                actualDeductionElement.textContent = '0';
+                return;
+            }
+            
+            if (userData.currencies[selectedCurrency]) {
+                const taxRate = userData.currencies[selectedCurrency].taxRate;
+                const tax = amount * taxRate;
+                const totalDeduction = amount + tax;
+                actualDeductionElement.textContent = totalDeduction.toFixed(2);
+            }
+        }
+        
+        // 显示页面
+        function showPage(pageName) {
+            pages.forEach(page => page.style.display = 'none');
+            document.getElementById(`${pageName}-page`).style.display = 'block';
+            
+            // 更新页面标题
+            let title = '我的钱包';
+            switch(pageName) {
+                case 'generate':
+                    title = '生成支付码';
+                    // 重置表单
+                    amountInput.value = '';
+                    receiverQqidInput.value = '';
+                    paymentNoteInput.value = '';
+                    actualDeductionElement.textContent = '0';
+                    paymentCodeContainer.style.display = 'none';
+                    // 监听货币选择变化
+                    currencySelect.addEventListener('change', updateTaxRateDisplay);
+                    break;
+                case 'receive':
+                    title = '接收支付';
+                    paymentCodeInput.value = '';
+                    pasteArea.style.display = 'block';
+                    verificationResult.style.display = 'none';
+                    break;
+                case 'history':
+                    title = '交易记录';
+                    updateTransactionsList();
+                    break;
+                case 'more-cards':
+                    title = '更多卡片';
+                    break;
+                case 'currency-detail':
+                    title = '货币详情';
+                    break;
+                case 'warehouse':
+                    title = '我的仓库';
+                    updateWarehouseList();
+                    break;
+                case 'category':
+                    title = currentCategory || '物品类别';
+                    updateCategoryItems();
+                    break;
+                case 'item-detail':
+                    title = currentItem?.name || '物品详情';
+                    updateItemDetail();
+                    break;
+                case 'mods':
+                    title = '模组管理';
+                    updateModsList();
+                    break;
+                case 'mod-detail':
+                    title = currentMod?.name || '模组详情';
+                    updateModDetail();
+                    break;
+            }
+            document.querySelector('.app-title').textContent = title;
+        }
+        
+        // 切换菜单
+        function toggleMenu() {
+            sideMenu.classList.toggle('open');
+        }
+        
+        // 设置账户（带注册码验证）
+        function setupAccount() {
+            const qqid = qqidInput.value.trim();
+            const regCode = regCodeInput.value.trim();
+            
+            if (!qqid) {
+                showAlert('错误', 'ㄨㄉㄤ输入有效ㄋㄨㄛQQ号');
+                return;
+            }
+            
+            if (!regCode) {
+                showAlert('错误', 'ㄨㄉㄤ输入注册码');
+                return;
+            }
+            
+            // 验证注册码
+            try {
+                const regData = decryptData(regCode);
+                
+                if (!regData || !regData.initialBalance || !regData.defaultCurrency || !regData.defaultColor) {
+                    showAlert('错误', '注册码无效或已过期');
+                    return;
+                }
+                
+                // 初始化用户数据
+                userData = {
+                    qqid,
+                    currencies: {
+                        [regData.defaultCurrency]: {
+                            balance: regData.initialBalance,
+                            totalTax: 0,
+                            symbol: regData.symbol || '¥',
+                            color: regData.defaultColor,
+                            taxRate: regData.taxRate || 0.03,
+                            issuer: regData.issuer || '未知发行商',
+                            supervisor: regData.supervisor || '未知监督组'
+                        }
+                    },
+                    defaultCurrency: regData.defaultCurrency,
+                    transactions: [],
+                    usedCodes: [],
+                    usedItemCodes: [],
+                    usedModCodes: [],
+                    warehouse: {},
+                    mods: {}
+                };
+                
+                saveData();
+                setupPage.style.display = 'none';
+                mainPage.style.display = 'block';
+                updateUI();
+                updateCurrencySelect();
+                
+                // 添加初始资金交易记录
+                addTransaction('政府', 'ㄊㄚㄍㄥ资金', regData.initialBalance, '银行账户配对', regData.defaultCurrency);
+                
+                showAlert('ㄨㄚ成', '账户注册ㄨㄚ成!');
+                showPage('wallet');
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('错误', '注册码验证失败');
+            }
+        }
+        
+        // 显示重置确认
+        function showResetConfirm() {
+            showAlert('确认', '确定要重置账户吗? 所有数据将被永久删除!', true, () => {
+                localStorage.removeItem('simCurrencyData');
+                userData = {
+                    qqid: '',
+                    currencies: {},
+                    defaultCurrency: '济明币',
+                    transactions: [],
+                    usedCodes: [],
+                    usedItemCodes: [],
+                    usedModCodes: [],
+                    warehouse: {},
+                    mods: {}
+                };
+                mainPage.style.display = 'none';
+                setupPage.style.display = 'block';
+                qqidInput.value = '';
+                regCodeInput.value = '';
+                toggleMenu();
+            });
+        }
+        
+        // 生成支付码（含税计算）
+        function generatePaymentCode() {
+            const amount = parseFloat(amountInput.value);
+            const receiverQqid = receiverQqidInput.value.trim();
+            const note = paymentNoteInput.value.trim();
+            const currency = currencySelect.value;
+            
+            if (isNaN(amount) || amount < 1) {
+                showAlert('错误', 'ㄨㄉㄤ输入有效ㄋㄨㄛ金额');
+                return;
+            }
+            
+            // 计算税和总扣除金额
+            const taxRate = userData.currencies[currency].taxRate;
+            const tax = amount * taxRate;
+            const totalDeduction = amount + tax;
+            
+            if (totalDeduction > userData.currencies[currency].balance) {
+                showAlert('错误', '余额不足（含税）');
+                return;
+            }
+            
+            if (!receiverQqid) {
+                showAlert('错误', 'ㄨㄉㄤ输入接收方QQ号');
+                return;
+            }
+            
+            if (receiverQqid === userData.qqid) {
+                showAlert('错误', '不能给自己转账');
+                return;
+            }
+            
+            // 创建交易对象
+            const transaction = {
+                id: generateUniqueId(),
+                sender: userData.qqid,
+                receiver: receiverQqid,
+                amount,
+                tax,
+                currency,
+                timestamp: Date.now(),
+                note: note || '无（ㄆㄧㄥㄎㄚ）备注',
+                status: 'pending'
+            };
+            
+            // 生成支付码 (加密的JSON字符串)
+            const paymentCodeText = encryptData(transaction);
+            
+            // 显示支付码
+            paymentCode.textContent = paymentCodeText;
+            paymentCodeContainer.style.display = 'block';
+            
+            // 扣除金额（含税）
+            userData.currencies[currency].balance -= totalDeduction;
+            userData.currencies[currency].totalTax += tax; // 累计税收
+            
+            updateUI();
+            
+            // 添加交易记录（含税记录）
+            addTransaction(receiverQqid, '转账支出', -totalDeduction, note || `转账给 ${receiverQqid} (含税 ${tax.toFixed(2)} ${userData.currencies[currency].symbol})`, currency);
+            addTransaction('税务部', '交易税', -tax, `转账给 ${receiverQqid} 的交易税`, currency);
+            
+            showAlert('ㄨㄚ成', `支付码已生成! 已扣除 ${totalDeduction.toFixed(2)} ${userData.currencies[currency].symbol} (含税 ${tax.toFixed(2)} ${userData.currencies[currency].symbol})`);
+        }
+        
+        // 验证支付码（含税处理）
+        function verifyPaymentCode() {
+            const code = paymentCodeInput.value.trim();
+            
+            if (!code) {
+                showAlert('错误', 'ㄨㄉㄤ输入支付码');
+                return;
+            }
+            
+            try {
+                // 解密支付码
+                const transaction = decryptData(code);
+                
+                // 验证支付码
+                if (!transaction) {
+                    showAlert('错误', '无效ㄋㄨㄛ支付码');
+                    return;
+                }
+                
+                // 检查是否已使用
+                if (userData.usedCodes.includes(transaction.id)) {
+                    showAlert('错误', 'ㄚㄌㄟ支付码已被使用');
+                    return;
+                }
+                
+                // 检查时间戳 (超过10分钟失效)
+                const now = Date.now();
+                if (now - transaction.timestamp > 10 * 60 * 1000) {
+                    showAlert('错误', '支付码已过期');
+                    return;
+                }
+                
+                // 检查接收方是否匹配
+                if (transaction.receiver !== userData.receiver) {
+                    showAlert('错误', 'ㄚㄌㄟ支付码ㄆㄛㄉㄜㄙ发给ㄗㄋㄨㄛ');
+                    return;
+                }
+              // 检查是否有对应的货币卡片
+            if (!userData.currencies[transaction.currency]) {
+                showAlert('错误', `收款失败，你没有绑定${transaction.currency}钱包`);
+                return;
+            }
+            
+            // 标记为已使用
+            userData.usedCodes.push(transaction.id);
+            
+            // 增加余额（不含税，税已由发送方支付）
+            userData.currencies[transaction.currency].balance += transaction.amount;
+            
+            // 添加交易记录
+            addTransaction(transaction.sender, '转账收入', transaction.amount, transaction.note, transaction.currency);
+            
+            // 显示验证结果
+            verificationMessage.innerHTML = `
+                <p><strong>发送方:</strong> ${transaction.sender}</p>
+                <p><strong>金额:</strong> ${transaction.amount.toFixed(2)} ${userData.currencies[transaction.currency].symbol}</p>
+                <p><strong>货币:</strong> ${transaction.currency}</p>
+                ${transaction.tax ? `<p><strong>税收:</strong> ${transaction.tax.toFixed(2)} ${userData.currencies[transaction.currency].symbol} (已由发送方支付)</p>` : ''}
+                <p><strong>备注:</strong> ${transaction.note}</p>
+                <p><strong>时间:</strong> ${new Date(transaction.timestamp).toLocaleString()}</p>
+                <p><strong>状态:</strong> <span style="color: var(--success);">支付成功!</span></p>
+            `;
+            verificationResult.style.display = 'block';
+            
+            // 清空输入
+            paymentCodeInput.value = '';
+            pasteArea.style.display = 'block';
+            
+            // 保存数据
+            saveData();
+            updateUI();
+            
+            showAlert('ㄨㄚ成', `支付接收成功! 已收到 ${transaction.amount.toFixed(2)} ${userData.currencies[transaction.currency].symbol}`);
+            
+        } catch (error) {
+            console.error(error);
+            showAlert('错误', '支付码验证ㄎㄚ败');
+        }
+    }
+    
+       
+        // 生成注册码函数
+        function generateRegcode() {
+            const initialBalance = parseFloat(document.getElementById('initial-balance').value);
+            const currencyName = document.getElementById('currency-name').value.trim();
+            const currencyColor = document.getElementById('currency-color').value;
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) / 100;
+            const issuer = document.getElementById('currency-issuer').value.trim();
+            const supervisor = document.getElementById('currency-supervisor').value.trim();
+            
+            if (isNaN(initialBalance) || initialBalance < 0) {
+                showAlert('错误', '请输入有效的初始余额');
+                return;
+            }
+            
+            if (!currencyName) {
+                showAlert('错误', '请输入货币名称');
+                return;
+            }
+            
+            if (!currencyColor) {
+                showAlert('错误', '请选择货币颜色');
+                return;
+            }
+            
+            if (isNaN(taxRate) || taxRate < 0 || taxRate > 0.5) {
+                showAlert('错误', '请输入有效的税率 (0-50%)');
+                return;
+            }
+            
+            // 创建注册码数据
+            const regcodeData = {
+                initialBalance: initialBalance,
+                defaultCurrency: currencyName,
+                defaultColor: currencyColor,
+                taxRate: taxRate,
+                issuer: issuer || '未知发行商',
+                supervisor: supervisor || '未知监督组'
+            };
+            
+            // 生成注册码 (加密的JSON字符串)
+            const regcode = encryptData(regcodeData);
+            
+            // 显示注册码
+            regcodeText.textContent = regcode;
+            regcodeResult.style.display = 'block';
+            
+            // 滚动到结果区域
+            regcodeResult.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 复制注册码
+        function copyRegcode() {
+            navigator.clipboard.writeText(regcodeText.textContent)
+                .then(() => {
+                    showAlert('成功', '注册码已复制到剪贴板');
+                })
+                .catch(err => {
+                    console.error('复制失败:', err);
+                    showAlert('错误', '复制失败，请手动选择复制');
+                });
+        }
+        
+        // 加密数据（保持与原有系统兼容）
+        function encryptData(data) {
+            try {
+                // 添加校验码
+                const dataWithChecksum = {
+                    ...data,
+                    checksum: generateChecksum(data)
+                };
+                
+                // 简单加密 - 实际应用中应该使用更安全的加密方法
+                const str = JSON.stringify(dataWithChecksum);
+                return btoa(unescape(encodeURIComponent(str)));
+            } catch (error) {
+                console.error('加密失败:', error);
+                return null;
+            }
+        }
+    
+    // 解密数据
+    function decryptData(code) {
+        try {
+            const str = decodeURIComponent(escape(atob(code)));
+            const data = JSON.parse(str);
+            
+            // 验证校验码
+            if (!verifyChecksum(data)) {
+                return null;
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('解密失败:', error);
+            return null;
+        }
+    }
+    
+    // 生成校验码
+    function generateChecksum(data) {
+        // 排除checksum字段本身
+        const { checksum, ...dataToHash } = data;
+        const str = JSON.stringify(dataToHash);
+        
+        // 简单哈希算法 - 实际应用中应该使用更安全的算法
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = (hash << 5) - hash + char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+    }
+    
+    // 验证校验码
+    function verifyChecksum(data) {
+        if (!data.checksum) return false;
+        const expectedChecksum = generateChecksum(data);
+        return data.checksum === expectedChecksum;
+    }
+    
+    // 添加交易记录
+    function addTransaction(from, description, amount, note = '', currency = null) {
+        const transaction = {
+            id: generateUniqueId(),
+            from,
+            description,
+            amount: parseFloat(amount.toFixed(2)), // 保留两位小数
+            note,
+            currency: currency || userData.defaultCurrency,
+            timestamp: Date.now()
+        };
+        
+        userData.transactions.unshift(transaction);
+        saveData();
+        updateTransactionsList();
+        updateRecentTransactions();
+    }
+    
+    // 更新交易记录列表
+    function updateTransactionsList() {
+        transactionsList.innerHTML = '';
+        
+        if (userData.transactions.length === 0) {
+            transactionsList.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 20px;">暂无交易记录</p>';
+            return;
+        }
+        
+        userData.transactions.forEach(t => {
+            const isIncome = t.amount > 0;
+            const isTax = t.from === '税务部';
+            const transactionEl = document.createElement('div');
+            transactionEl.className = `transaction-card ${isTax ? 'tax' : isIncome ? 'income' : 'outcome'}`;
+            
+            const currencySymbol = userData.currencies[t.currency]?.symbol || '¥';
+            
+            transactionEl.innerHTML = `
+                <div class="transaction-icon">
+                    <i class="fas ${isTax ? 'fa-landmark' : isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-title">${t.description}</div>
+                    <div class="transaction-meta">${t.from} • ${new Date(t.timestamp).toLocaleString()}</div>
+                    ${t.note ? `<div class="transaction-meta">备注: ${t.note}</div>` : ''}
+                    ${t.currency ? `<div class="transaction-meta">货币: ${t.currency}</div>` : ''}
+                </div>
+                <div class="transaction-amount">${isIncome ? '+' : ''}${t.amount.toFixed(2)} ${currencySymbol}</div>
+            `;
+            
+            transactionsList.appendChild(transactionEl);
+        });
+    }
+    
+    // 更新最近交易
+    function updateRecentTransactions() {
+        recentTransactions.innerHTML = '';
+        
+        const recent = userData.transactions.slice(0, 3); // 只显示最近3条
+        
+        if (recent.length === 0) {
+            recentTransactions.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 10px;">暂无最近交易</p>';
+            return;
+        }
+        
+        recent.forEach(t => {
+            const isIncome = t.amount > 0;
+            const isTax = t.from === '税务部';
+            const transactionEl = document.createElement('div');
+            transactionEl.className = `transaction-card ${isTax ? 'tax' : isIncome ? 'income' : 'outcome'}`;
+            
+            const currencySymbol = userData.currencies[t.currency]?.symbol || '¥';
+            
+            transactionEl.innerHTML = `
+                <div class="transaction-icon">
+                    <i class="fas ${isTax ? 'fa-landmark' : isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-title">${t.description}</div>
+                    <div class="transaction-meta">${new Date(t.timestamp).toLocaleDateString()}</div>
+                </div>
+                <div class="transaction-amount">${isIncome ? '+' : ''}${t.amount.toFixed(2)} ${currencySymbol}</div>
+            `;
+            
+            recentTransactions.appendChild(transactionEl);
+        });
+    }
+    
+    // 更新UI
+    function updateUI() {
+        displayQqid.textContent = userData.qqid;
+        
+        // 更新默认货币卡片
+        if (userData.currencies[userData.defaultCurrency]) {
+            const currencyData = userData.currencies[userData.defaultCurrency];
+            
+            currentBalance.textContent = currencyData.balance.toFixed(2);
+            totalTaxElement.textContent = currencyData.totalTax.toFixed(2);
+            currencySymbol.textContent = currencyData.symbol;
+            taxCurrencySymbol.textContent = currencyData.symbol;
+            walletCurrencyName.textContent = userData.defaultCurrency;
+            taxCurrencyName.textContent = userData.defaultCurrency;
+            
+            // 更新卡片颜色
+            document.getElementById('main-wallet-card').style.background = 
+                `linear-gradient(135deg, ${currencyData.color}, ${lightenColor(currencyData.color, 20)})`;
+            document.getElementById('main-tax-card').style.background = 
+                `linear-gradient(135deg, ${darkenColor(currencyData.color, 20)}, ${darkenColor(currencyData.color, 40)})`;
+        }
+        
+        updateRecentTransactions();
+    }
+    
+    // 显示提示信息
+    function showAlert(title, message, showConfirm = false, confirmCallback = null) {
+        alertTitle.textContent = title;
+        alertMessage.textContent = message;
+        
+        if (showConfirm) {
+            alertConfirmBtn.style.display = 'block';
+            alertConfirmBtn.onclick = () => {
+                if (confirmCallback) confirmCallback();
+                closeAlert();
+            };
+        } else {
+            alertConfirmBtn.style.display = 'none';
+        }
+        
+        alertModal.classList.add('show');
+    }
+    
+    // 关闭提示
+    function closeAlert() {
+        alertModal.classList.remove('show');
+    }
+    
+    // 复制支付码
+    function copyPaymentCode() {
+        navigator.clipboard.writeText(paymentCode.textContent)
+            .then(() => {
+                showAlert('ㄨㄚ成', '支付码已复制到剪贴板');
+            })
+            .catch(err => {
+                console.error('复制ㄎㄚ败:', err);
+                showAlert('错误', '复制ㄎㄚ败，ㄨㄉㄤ手动选择复制');
+            });
+    }
+    
+    // 生成唯一ID
+    function generateUniqueId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // 保存数据到本地存储
+    function saveData() {
+        localStorage.setItem('simCurrencyData', JSON.stringify(userData));
+    }
+    
+    // 显示导出数据
+    function showExportData() {
+        dataModalTitle.textContent = '导出数据';
+        exportSection.style.display = 'block';
+        importSection.style.display = 'none';
+        
+        // 加密用户数据
+        const encryptedData = encryptData(userData);
+        exportDataText.value = encryptedData;
+        
+        dataModal.classList.add('show');
+        toggleMenu();
+    }
+    
+    // 显示导入数据
+    function showImportData() {
+        dataModalTitle.textContent = '导入数据';
+        exportSection.style.display = 'none';
+        importSection.style.display = 'block';
+        importDataText.value = '';
+        dataModal.classList.add('show');
+        toggleMenu();
+    }
+    
+    // 复制导出数据
+    function copyExportData() {
+        navigator.clipboard.writeText(exportDataText.value)
+            .then(() => {
+                showAlert('ㄨㄚ成', '数据已复制到剪贴板');
+            })
+            .catch(err => {
+                console.error('复制失败:', err);
+                showAlert('错误', '复制ㄎㄚ败，ㄨㄉㄤ手动选择复制');
+            });
+    }
+    
+    // 确认导入数据
+    function confirmImportData() {
+        try {
+            const encryptedData = importDataText.value.trim();
+            if (!encryptedData) {
+                showAlert('错误', 'ㄨㄉㄤ输入要导入ㄋㄨㄛ数据');
+                return;
+            }
+            
+            // 解密数据
+            const data = decryptData(encryptedData);
+            if (!data) {
+                showAlert('错误', '数据解密ㄎㄚ败，可能数据已损坏');
+                return;
+            }
+            
+            // 验证数据完整性
+            if (!data.qqid || !data.currencies || !data.defaultCurrency) {
+                showAlert('错误', '无效ㄋㄨㄛ数据格式');
+                return;
+            }
+            
+            userData = data;
+            saveData();
+            updateUI();
+            updateCurrencySelect();
+            updateMoreCardsList();
+            updateWarehouseList();
+            updateModsList();
+            dataModal.classList.remove('show');
+            showAlert('ㄨㄚ成', '数据导入ㄨㄚ成!');
+        } catch (e) {
+            console.error('导入ㄎㄚ败:', e);
+            showAlert('错误', '数据解析ㄎㄚ败，ㄨㄉㄤ检查数据格式');
+        }
+    }
+    
+    // 颜色辅助函数
+    function lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return `#${(
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+        ).toString(16).slice(1)}`;
+    }
+    
+    function darkenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) - amt;
+        const G = (num >> 8 & 0x00FF) - amt;
+        const B = (num & 0x0000FF) - amt;
+        return `#${(
+            0x1000000 +
+            (R > 0 ? (R < 255 ? R : 255) : 0) * 0x10000 +
+            (G > 0 ? (G < 255 ? G : 255) : 0) * 0x100 +
+            (B > 0 ? (B < 255 ? B : 255) : 0)
+        ).toString(16).slice(1)}`;
+    }
+    
+    // 仓库功能
+    // 更新仓库列表
+    function updateWarehouseList() {
+        warehouseContainer.innerHTML = '';
+        
+        const categories = Object.keys(userData.warehouse);
+        if (categories.length === 0) {
+            warehouseContainer.innerHTML = '<div class="no-cards-message">仓库空空</div>';
+            return;
+        }
+        
+        categories.forEach(category => {
+            const items = userData.warehouse[category];
+            const categoryEl = document.createElement('div');
+            categoryEl.className = 'warehouse-category';
+            categoryEl.innerHTML = `
+                <div class="warehouse-category-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="warehouse-category-name">${category}</div>
+                <div class="warehouse-category-count">${items.length}件</div>
+            `;
+            categoryEl.addEventListener('click', () => showCategoryItems(category));
+            warehouseContainer.appendChild(categoryEl);
+        });
+    }
+    
+    // 显示添加类别模态框
+    function showAddCategoryModal() {
+        categoryCodeInput.value = '';
+        addCategoryModal.classList.add('show');
+    }
+    
+    // 添加新类别
+    function addNewCategory() {
+        const code = categoryCodeInput.value.trim();
+        
+        if (!code) {
+            showAlert('错误', '请输入扩类码');
+            return;
+        }
+        
+        try {
+            // 解密扩类码
+            const categoryData = decryptData(code);
+            
+            // 验证扩类码
+            if (!categoryData || !categoryData.category) {
+                showAlert('错误', '无效的扩类码');
+                return;
+            }
+            
+            // 检查是否已存在该类别
+            if (userData.warehouse[categoryData.category]) {
+                showAlert('错误', '您已经拥有该物品类别');
+                return;
+            }
+            
+            // 添加新类别
+            userData.warehouse[categoryData.category] = [];
+            
+            saveData();
+            updateWarehouseList();
+            addCategoryModal.classList.remove('show');
+            
+            showAlert('成功', `已成功添加${categoryData.category}类别`);
+            
+        } catch (error) {
+            console.error(error);
+            showAlert('错误', '扩类码验证失败');
+        }
+    }
+    
+    // 显示类别中的物品
+    function showCategoryItems(category) {
+        currentCategory = category;
+        showPage('category');
+        updateCategoryItems();
+    }
+    
+    // 更新类别物品列表
+    function updateCategoryItems() {
+        categoryTitle.textContent = currentCategory;
+        categoryContainer.innerHTML = '';
+        
+        const items = userData.warehouse[currentCategory] || [];
+        if (items.length === 0) {
+            categoryContainer.innerHTML = '<div class="no-cards-message">仓库空空</div>';
+            return;
+        }
+        
+        items.forEach((item, index) => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'item-card';
+            itemEl.style.background = `linear-gradient(135deg, ${item.color || '#7b2cbf'}, ${lightenColor(item.color || '#7b2cbf', 20)})`;
+            
+            itemEl.innerHTML = `
+                <div class="item-title">${item.name}</div>
+                ${item.amount ? `<div class="item-amount">数量: ${item.amount}</div>` : ''}
+                ${item.value ? `<div class="item-value">价值: ${item.value}</div>` : ''}
+            `;
+            
+            itemEl.addEventListener('click', () => showItemDetail(currentCategory, index));
+            categoryContainer.appendChild(itemEl);
+        });
+    }
+    
+    // 返回仓库页面
+    function backToWarehouse() {
+        currentCategory = null;
+        showPage('warehouse');
+    }
+    
+    // 显示添加物品模态框
+    function showAddItemModal() {
+        itemCodeInput.value = '';
+        addItemModal.classList.add('show');
+    }
+    
+    // 添加新物品
+    function addNewItem() {
+        const code = itemCodeInput.value.trim();
+        
+        if (!code) {
+            showAlert('错误', '请输入物品码');
+            return;
+        }
+        
+        try {
+            // 解密物品码
+            const itemData = decryptData(code);
+            
+            // 验证物品码
+            if (!itemData || !itemData.name || !itemData.category) {
+                showAlert('错误', '无效的物品码');
+                return;
+            }
+            
+            // 检查是否已使用过该物品码
+            if (userData.usedItemCodes.includes(code)) {
+                showAlert('错误', '该物品码已被使用过，不能重复添加');
+                return;
+            }
+            
+            // 检查是否已有该类别
+            if (!userData.warehouse[itemData.category]) {
+                showAlert('错误', '您还没有该物品类别，请先添加类别');
+                return;
+            }
+            
+            // 添加新物品
+            const newItem = {
+                name: itemData.name,
+                category: itemData.category,
+                color: itemData.color || '#7b2cbf',
+                amount: itemData.amount || null,
+                value: itemData.value || null,
+                details: itemData.details || {}
+            };
+            
+            userData.warehouse[itemData.category].push(newItem);
+            userData.usedItemCodes.push(code); // 标记为已使用
+            
+            saveData();
+            updateCategoryItems();
+            addItemModal.classList.remove('show');
+            
+            showAlert('成功', `已成功添加${itemData.name}`);
+            
+        } catch (error) {
+            console.error(error);
+            showAlert('错误', '物品码验证失败');
+        }
+    }
+    
+    // 显示物品详情
+    function showItemDetail(category, index) {
+        currentItem = {
+            ...userData.warehouse[category][index],
+            category,
+            index
+        };
+        
+        showPage('item-detail');
+        updateItemDetail();
+    }
+    
+    // 更新物品详情
+    function updateItemDetail() {
+        if (!currentItem) return;
+        
+        itemDetailTitle.textContent = currentItem.name;
+        
+        // 设置卡片背景
+        itemDetailCard.style.background = `linear-gradient(135deg, ${currentItem.color || '#7b2cbf'}, ${lightenColor(currentItem.color || '#7b2cbf', 20)})`;
+        
+        // 更新详情信息
+        itemDetailInfo.innerHTML = '';
+        
+        // 添加基本信息
+        const basicInfo = document.createElement('div');
+        basicInfo.className = 'item-detail-row';
+        basicInfo.innerHTML = `
+            <span class="item-detail-label">类别</span>
+            <span class="item-detail-value">${currentItem.category}</span>
+        `;
+        itemDetailInfo.appendChild(basicInfo);
+        
+        // 如果有数量，显示数量
+        if (currentItem.amount) {
+            const amountInfo = document.createElement('div');
+            amountInfo.className = 'item-detail-row';
+            amountInfo.innerHTML = `
+                <span class="item-detail-label">数量</span>
+                <span class="item-detail-value">${currentItem.amount}</span>
+            `;
+            itemDetailInfo.appendChild(amountInfo);
+            
+            // 显示转让数量输入框
+            transferAmountSection.style.display = 'block';
+            transferAmountInput.value = '';
+            transferAmountInput.max = currentItem.amount;
+            transferAmountInput.placeholder = `最大可转让: ${currentItem.amount}`;
+        } else {
+            transferAmountSection.style.display = 'none';
+        }
+        
+        // 如果有价值，显示价值
+        if (currentItem.value) {
+            const valueInfo = document.createElement('div');
+            valueInfo.className = 'item-detail-row';
+            valueInfo.innerHTML = `
+                <span class="item-detail-label">价值</span>
+                <span class="item-detail-value">${currentItem.value}</span>
+            `;
+            itemDetailInfo.appendChild(valueInfo);
+        }
+        
+        // 添加其他详细信息
+        Object.keys(currentItem.details || {}).forEach(key => {
+            const detailRow = document.createElement('div');
+            detailRow.className = 'item-detail-row';
+            detailRow.innerHTML = `
+                <span class="item-detail-label">${key}</span>
+                <span class="item-detail-value">${currentItem.details[key]}</span>
+            `;
+            itemDetailInfo.appendChild(detailRow);
+        });
+    }
+    
+    // 返回类别页面
+    function backToCategory() {
+        showPage('category');
+    }
+    
+    // 显示转让物品模态框
+    function showTransferItemModal() {
+        if (!currentItem) return;
+        
+        // 重置表单
+        transferItemReceiver.value = '';
+        transferItemCodeContainer.style.display = 'none';
+        
+        // 更新转让信息
+        transferItemInfo.innerHTML = `
+            <p><strong>物品名称:</strong> ${currentItem.name}</p>
+            ${currentItem.amount ? `<p><strong>转让数量:</strong> ${transferAmountInput.value || currentItem.amount}</p>` : ''}
+        `;
+        
+        transferItemModal.classList.add('show');
+    }
+    
+    // 生成转让物品码
+    function generateTransferItemCode() {
+        const receiverQqid = transferItemReceiver.value.trim();
+        
+        if (!receiverQqid) {
+            showAlert('错误', '请输入接收方QQ号');
+            return;
+        }
+        
+        if (receiverQqid === userData.qqid) {
+            showAlert('错误', '不能转让给自己');
+            return;
+        }
+        
+        // 创建转让对象
+        const transferData = {
+            type: 'item',
+            item: {
+                ...currentItem
+            },
+            sender: userData.qqid,
+            receiver: receiverQqid,
+            timestamp: Date.now()
+        };
+        
+        // 如果有数量，设置转让数量
+        if (currentItem.amount) {
+            const transferAmount = parseInt(transferAmountInput.value) || currentItem.amount;
+            if (transferAmount > currentItem.amount) {
+                showAlert('错误', '转让数量不能超过当前数量');
+                return;
+            }
+            transferData.item.amount = transferAmount;
+        }
+        
+        // 生成转让码 (加密的JSON字符串)
+        const transferCodeText = encryptData(transferData);
+        
+        // 显示转让码
+        transferItemCode.textContent = transferCodeText;
+        transferItemCodeContainer.style.display = 'block';
+        
+        showAlert('成功', '转物码已生成，请复制给对方');
+    }
+    
+    // 复制转让物品码
+    function copyTransferItemCode() {
+        navigator.clipboard.writeText(transferItemCode.textContent)
+            .then(() => {
+                showAlert('成功', '转物码已复制到剪贴板');
+                
+                // 从仓库中移除物品
+                removeItemAfterTransfer();
+            })
+            .catch(err => {
+                console.error('复制失败:', err);
+                showAlert('错误', '复制失败，请手动选择复制');
+            });
+    }
+    
+    // 转让后从仓库中移除物品
+    function removeItemAfterTransfer() {
+        if (!currentItem) return;
+        
+        const items = userData.warehouse[currentItem.category];
+        
+        if (currentItem.amount) {
+            // 数量物品，减去转让数量
+            const transferAmount = parseInt(transferAmountInput.value) || currentItem.amount;
+            items[currentItem.index].amount -= transferAmount;
+            
+            if (items[currentItem.index].amount <= 0) {
+                // 数量为0，删除物品
+                items.splice(currentItem.index, 1);
+            }
+        } else {
+            // 非数量物品，直接删除
+            items.splice(currentItem.index, 1);
+        }
+        
+        saveData();
+        updateCategoryItems();
+        transferItemModal.classList.remove('show');
+        backToCategory();
+    }
+    
+    // 显示删除物品确认
+    function showDeleteItemConfirm() {
+        if (!currentItem) return;
+        
+        currentItemToDelete = currentItem;
+        deleteItemMessage.textContent = `确定要删除${currentItem.name}吗？删除后该物品将消失！`;
+        deleteItemModal.classList.add('show');
+    }
+    
+    // 确认删除物品
+    function confirmDeleteItem() {
+        if (!currentItemToDelete) return;
+        
+        const items = userData.warehouse[currentItemToDelete.category];
+        items.splice(currentItemToDelete.index, 1);
+        
+        // 如果类别中没有物品了，删除类别
+        if (items.length === 0) {
+            delete userData.warehouse[currentItemToDelete.category];
+        }
+        
+        saveData();
+        updateWarehouseList();
+        deleteItemModal.classList.remove('show');
+        
+        showAlert('成功', `已删除${currentItemToDelete.name}`);
+        currentItemToDelete = null;
+        
+        // 返回类别页面
+        backToCategory();
+    }
+    
+    // 模组功能
+    // 更新模组列表
+    function updateModsList() {
+        modsContainer.innerHTML = '';
+        
+        const mods = Object.keys(userData.mods);
+        if (mods.length === 0) {
+            modsContainer.innerHTML = '<div class="no-cards-message">暂无模组</div>';
+            return;
+        }
+        
+        mods.forEach(modName => {
+            const modData = userData.mods[modName];
+            const modEl = document.createElement('div');
+            modEl.className = 'mod-card';
+            modEl.innerHTML = `
+                <div class="mod-card-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="mod-card-info">
+                    <div class="mod-card-name">${modName}</div>
+                    <div class="mod-card-desc">${modData.description || '无描述'}</div>
+                </div>
+                <div class="mod-card-version">v${modData.version || '1.0'}</div>
+            `;
+            modEl.addEventListener('click', () => showModDetail(modName));
+            modsContainer.appendChild(modEl);
+        });
+    }
+    
+    // 显示添加模组模态框
+    function showAddModModal() {
+        modCodeInput.value = '';
+        addModModal.classList.add('show');
+    }
+    
+    // 添加新模组
+    function addNewMod() {
+        const code = modCodeInput.value.trim();
+        
+        if (!code) {
+            showAlert('错误', '请输入模组码');
+            return;
+        }
+        
+        try {
+            // 解密模组码
+            const modData = decryptData(code);
+            
+            // 验证模组码
+            if (!modData || !modData.name || !modData.type || modData.type !== 'mod') {
+                showAlert('错误', '无效的模组码');
+                return;
+            }
+            
+            // 检查是否已使用过该模组码
+            if (userData.usedModCodes.includes(code)) {
+                showAlert('错误', '该模组码已被使用过，不能重复添加');
+                return;
+            }
+            
+            // 检查是否已存在该模组
+            if (userData.mods[modData.name]) {
+                showAlert('错误', '您已经拥有该模组');
+                return;
+            }
+            
+            // 检查依赖
+            if (modData.dependencies) {
+                for (const dep of modData.dependencies) {
+                    if (!userData.mods[dep]) {
+                        showAlert('错误', `缺少依赖模组: ${dep}`);
+                        return;
+                    }
+                }
+            }
+            
+            // 添加新模组
+            userData.mods[modData.name] = {
+                version: modData.version || '1.0',
+                description: modData.description || '无描述',
+                features: modData.features || [],
+                scripts: modData.scripts || null,
+                assets: modData.assets || null,
+                dependencies: modData.dependencies || []
+            };
+            
+            userData.usedModCodes.push(code); // 标记为已使用
+            
+            // 执行模组脚本
+            if (modData.scripts) {
+                try {
+                    const script = decryptData(modData.scripts);
+                    // 安全执行脚本
+                    const modFunction = new Function(script);
+                    modFunction.call(window, {
+                        system: window,
+                        utils: { /* 提供安全API */ }
+                    });
+                } catch (e) {
+                    console.error(`模组 ${modData.name} 脚本执行失败`, e);
+                    showAlert('警告', `模组 ${modData.name} 脚本执行失败，部分功能可能不可用`);
+                }
+            }
+            
+            saveData();
+            updateModsList();
+            addModModal.classList.remove('show');
+            
+            showAlert('成功', `已成功添加${modData.name}模组`);
+            
+        } catch (error) {
+            console.error(error);
+            showAlert('错误', '模组码验证失败');
+        }
+    }
+    
+    // 显示模组详情
+    function showModDetail(modName) {
+        if (!userData.mods[modName]) return;
+        
+        currentMod = {
+            name: modName,
+            ...userData.mods[modName]
+        };
+        
+        showPage('mod-detail');
+        updateModDetail();
+    }
+    
+    // 更新模组详情
+    function updateModDetail() {
+        if (!currentMod) return;
+        
+        modDetailTitle.textContent = currentMod.name;
+        
+        // 设置卡片背景
+        modDetailCard.style.background = `linear-gradient(135deg, var(--primary), var(--primary-light))`;
+        
+        // 更新详情信息
+        modDetailInfo.innerHTML = '';
+        
+        // 添加基本信息
+        const versionInfo = document.createElement('div');
+        versionInfo.className = 'mod-detail-row';
+        versionInfo.innerHTML = `
+            <span class="mod-detail-label">版本</span>
+            <span class="mod-detail-value">v${currentMod.version || '1.0'}</span>
+        `;
+        modDetailInfo.appendChild(versionInfo);
+        
+        // 描述
+        const descInfo = document.createElement('div');
+        descInfo.className = 'mod-detail-row';
+        descInfo.innerHTML = `
+            <span class="mod-detail-label">描述</span>
+            <span class="mod-detail-value">${currentMod.description || '无描述'}</span>
+        `;
+        modDetailInfo.appendChild(descInfo);
+        
+        // 功能
+        if (currentMod.features && currentMod.features.length > 0) {
+            const featuresInfo = document.createElement('div');
+            featuresInfo.className = 'mod-detail-row';
+            featuresInfo.innerHTML = `
+                <span class="mod-detail-label">功能</span>
+                <span class="mod-detail-value">
+                    <ul style="padding-left: 15px; margin: 0;">
+                        ${currentMod.features.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </span>
+            `;
+            modDetailInfo.appendChild(featuresInfo);
+        }
+        
+        // 依赖
+        if (currentMod.dependencies && currentMod.dependencies.length > 0) {
+            const depsInfo = document.createElement('div');
+            depsInfo.className = 'mod-detail-row';
+            depsInfo.innerHTML = `
+                <span class="mod-detail-label">依赖</span>
+                <span class="mod-detail-value">
+                    ${currentMod.dependencies.join(', ')}
+                </span>
+            `;
+            modDetailInfo.appendChild(depsInfo);
+        }
+    }
+    
+    // 返回模组页面
+    function backToMods() {
+        currentMod = null;
+        showPage('mods');
+    }
+    
+    // 显示卸载模组确认
+    function showUninstallModConfirm() {
+        if (!currentMod) return;
+        
+        currentModToUninstall = currentMod.name;
+        uninstallModMessage.textContent = `确定要卸载${currentMod.name}模组吗？卸载后模组功能将失效！`;
+        uninstallModModal.classList.add('show');
+    }
+    
+    // 确认卸载模组
+    function confirmUninstallMod() {
+        if (!currentModToUninstall) return;
+        
+        // 删除模组
+        delete userData.mods[currentModToUninstall];
+        
+        saveData();
+        updateModsList();
+        uninstallModModal.classList.remove('show');
+        
+        showAlert('成功', `已卸载${currentModToUninstall}模组`);
+        currentModToUninstall = null;
+        
+        // 返回模组页面
+        backToMods();
+    }
+    
+    // 初始化应用
+    init();
+</script>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>济明经济系统码生成器</title>
+    <style>
+        :root {
+            --primary: #7b2cbf;
+            --primary-light: #9d4edd;
+            --secondary: #ff9e00;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #38b000;
+            --danger: #d00000;
+            --info: #4361ee;
+            --bg: #f5f3ff;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #6c757d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #ffaa00;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+        
+        .color-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="color"] {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+        
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px dashed #ddd;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .code-text {
+            font-family: monospace;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert.error {
+            background-color: rgba(208, 0, 0, 0.1);
+            color: var(--danger);
+        }
+        
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .color-option.selected {
+            border-color: var(--dark);
+        }
+        
+        .item-details {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .detail-row input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .detail-row button {
+            padding: 0 15px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .feature-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .feature-row input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .feature-row button {
+            padding: 0 15px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>济明经济系统码生成器</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="register">注册码</div>
+            <div class="tab" data-tab="card">增卡码</div>
+            <div class="tab" data-tab="category">扩类码</div>
+            <div class="tab" data-tab="item">物品码</div>
+            <div class="tab" data-tab="mod">模组码</div>
+        </div>
+        
+        <div class="alert" id="alert"></div>
+        
+        <!-- 注册码生成器 -->
+        <div class="tab-content active" id="register-tab">
+            <div class="form-group">
+                <label for="reg-currency">货币名称</label>
+                <input type="text" id="reg-currency" placeholder="例如: 济明币">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-symbol">货币符号</label>
+                <input type="text" id="reg-symbol" placeholder="例如: ¥">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-amount">初始金额</label>
+                <input type="number" id="reg-amount" placeholder="例如: 1000" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-tax-rate">交易税率 (%)</label>
+                <input type="number" id="reg-tax-rate" placeholder="例如: 3" min="0" max="100" value="3">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-color">货币颜色</label>
+                <div class="color-controls">
+                    <input type="color" id="reg-color-picker" value="#7b2cbf">
+                    <input type="text" id="reg-color" placeholder="例如: #7b2cbf" value="#7b2cbf">
+                    <div class="color-preview" id="reg-color-preview" style="background-color: #7b2cbf;"></div>
+                </div>
+                
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #7b2cbf;" data-color="#7b2cbf"></div>
+                    <div class="color-option" style="background-color: #4361ee;" data-color="#4361ee"></div>
+                    <div class="color-option" style="background-color: #38b000;" data-color="#38b000"></div>
+                    <div class="color-option" style="background-color: #ff9e00;" data-color="#ff9e00"></div>
+                    <div class="color-option" style="background-color: #d00000;" data-color="#d00000"></div>
+                    <div class="color-option" style="background-color: #212529;" data-color="#212529"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-issuer">发行商</label>
+                <input type="text" id="reg-issuer" placeholder="例如: 晨曦东亚 & PVSO和平化虚拟国组织">
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-supervisor">货币监督组</label>
+                <input type="text" id="reg-supervisor" placeholder="例如: 晨曦东亚经济部">
+            </div>
+            
+            <button class="btn" id="generate-register">生成注册码</button>
+            
+            <div class="result-container" id="register-result" style="display: none;">
+                <button class="copy-btn" id="copy-register"><i class="fas fa-copy"></i> 复制</button>
+                <div class="code-text" id="register-code"></div>
+            </div>
+        </div>
+        
+        <!-- 增卡码生成器 -->
+        <div class="tab-content" id="card-tab">
+            <div class="form-group">
+                <label for="card-currency">货币名称</label>
+                <input type="text" id="card-currency" placeholder="例如: 济明币">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-symbol">货币符号</label>
+                <input type="text" id="card-symbol" placeholder="例如: ¥">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-amount">初始金额</label>
+                <input type="number" id="card-amount" placeholder="例如: 100" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-tax-rate">交易税率 (%)</label>
+                <input type="number" id="card-tax-rate" placeholder="例如: 3" min="0" max="100" value="3">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-color">货币颜色</label>
+                <div class="color-controls">
+                    <input type="color" id="card-color-picker" value="#7b2cbf">
+                    <input type="text" id="card-color" placeholder="例如: #7b2cbf" value="#7b2cbf">
+                    <div class="color-preview" id="card-color-preview" style="background-color: #7b2cbf;"></div>
+                </div>
+                
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #7b2cbf;" data-color="#7b2cbf"></div>
+                    <div class="color-option" style="background-color: #4361ee;" data-color="#4361ee"></div>
+                    <div class="color-option" style="background-color: #38b000;" data-color="#38b000"></div>
+                    <div class="color-option" style="background-color: #ff9e00;" data-color="#ff9e00"></div>
+                    <div class="color-option" style="background-color: #d00000;" data-color="#d00000"></div>
+                    <div class="color-option" style="background-color: #212529;" data-color="#212529"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="card-issuer">发行商</label>
+                <input type="text" id="card-issuer" placeholder="例如: 晨曦东亚 & PVSO和平化虚拟国组织">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-supervisor">货币监督组</label>
+                <input type="text" id="card-supervisor" placeholder="例如: 晨曦东亚经济部">
+            </div>
+            
+            <button class="btn" id="generate-card">生成增卡码</button>
+            
+            <div class="result-container" id="card-result" style="display: none;">
+                <button class="copy-btn" id="copy-card"><i class="fas fa-copy"></i> 复制</button>
+                <div class="code-text" id="card-code"></div>
+            </div>
+        </div>
+        
+        <!-- 扩类码生成器 -->
+        <div class="tab-content" id="category-tab">
+            <div class="form-group">
+                <label for="category-name">类别名称</label>
+                <input type="text" id="category-name" placeholder="例如: 食品">
+            </div>
+            
+            <button class="btn" id="generate-category">生成扩类码</button>
+            
+            <div class="result-container" id="category-result" style="display: none;">
+                <button class="copy-btn" id="copy-category"><i class="fas fa-copy"></i> 复制</button>
+                <div class="code-text" id="category-code"></div>
+            </div>
+        </div>
+        
+        <!-- 物品码生成器 -->
+        <div class="tab-content" id="item-tab">
+            <div class="form-group">
+                <label for="item-name">物品名称</label>
+                <input type="text" id="item-name" placeholder="例如: 苹果">
+            </div>
+            
+            <div class="form-group">
+                <label for="item-category">物品类别</label>
+                <input type="text" id="item-category" placeholder="例如: 食品">
+            </div>
+            
+            <div class="form-group">
+                <label for="item-amount">物品数量 (可选)</label>
+                <input type="number" id="item-amount" placeholder="留空表示单个物品">
+            </div>
+            
+            <div class="form-group">
+                <label for="item-value">物品价值 (可选)</label>
+                <input type="text" id="item-value" placeholder="例如: 10济明币">
+            </div>
+            
+            <div class="form-group">
+                <label for="item-color">物品颜色</label>
+                <div class="color-controls">
+                    <input type="color" id="item-color-picker" value="#7b2cbf">
+                    <input type="text" id="item-color" placeholder="例如: #7b2cbf" value="#7b2cbf">
+                    <div class="color-preview" id="item-color-preview" style="background-color: #7b2cbf;"></div>
+                </div>
+                
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #7b2cbf;" data-color="#7b2cbf"></div>
+                    <div class="color-option" style="background-color: #4361ee;" data-color="#4361ee"></div>
+                    <div class="color-option" style="background-color: #38b000;" data-color="#38b000"></div>
+                    <div class="color-option" style="background-color: #ff9e00;" data-color="#ff9e00"></div>
+                    <div class="color-option" style="background-color: #d00000;" data-color="#d00000"></div>
+                    <div class="color-option" style="background-color: #212529;" data-color="#212529"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>物品详细信息 (可选)</label>
+                <div class="item-details" id="item-details">
+                    <!-- 动态添加的详情行 -->
+                </div>
+                <button class="btn btn-secondary" id="add-detail">添加详情</button>
+            </div>
+            
+            <button class="btn" id="generate-item">生成物品码</button>
+            
+            <div class="result-container" id="item-result" style="display: none;">
+                <button class="copy-btn" id="copy-item"><i class="fas fa-copy"></i> 复制</button>
+                <div class="code-text" id="item-code"></div>
+            </div>
+        </div>
+        
+        <!-- 模组码生成器 -->
+        <div class="tab-content" id="mod-tab">
+            <div class="form-group">
+                <label for="mod-name">模组名称</label>
+                <input type="text" id="mod-name" placeholder="例如: 天气系统">
+            </div>
+            
+            <div class="form-group">
+                <label for="mod-version">模组版本</label>
+                <input type="text" id="mod-version" placeholder="例如: 1.0" value="1.0">
+            </div>
+            
+            <div class="form-group">
+                <label for="mod-description">模组描述</label>
+                <textarea id="mod-description" rows="3" placeholder="描述模组的功能"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>模组功能</label>
+                <div id="mod-features">
+                    <!-- 动态添加的功能行 -->
+                </div>
+                <button class="btn btn-secondary" id="add-feature">添加功能</button>
+            </div>
+            
+            <div class="form-group">
+                <label>依赖模组 (可选)</label>
+                <input type="text" id="mod-dependencies" placeholder="用逗号分隔，例如: 基础系统,UI增强">
+            </div>
+            
+            <div class="form-group">
+                <label for="mod-scripts">模组脚本 (可选)</label>
+                <textarea id="mod-scripts" rows="5" placeholder="输入JavaScript代码"></textarea>
+            </div>
+            
+            <button class="btn" id="generate-mod">生成模组码</button>
+            
+            <div class="result-container" id="mod-result" style="display: none;">
+                <button class="copy-btn" id="copy-mod"><i class="fas fa-copy"></i> 复制</button>
+                <div class="code-text" id="mod-code"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 确保DOM完全加载后再执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有标签页和内容
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const alertBox = document.getElementById('alert');
+            
+            // 注册码相关元素
+            const generateRegisterBtn = document.getElementById('generate-register');
+            const registerResult = document.getElementById('register-result');
+            const registerCode = document.getElementById('register-code');
+            const copyRegisterBtn = document.getElementById('copy-register');
+            
+            // 增卡码相关元素
+            const generateCardBtn = document.getElementById('generate-card');
+            const cardResult = document.getElementById('card-result');
+            const cardCode = document.getElementById('card-code');
+            const copyCardBtn = document.getElementById('copy-card');
+            
+            // 扩类码相关元素
+            const generateCategoryBtn = document.getElementById('generate-category');
+            const categoryResult = document.getElementById('category-result');
+            const categoryCode = document.getElementById('category-code');
+            const copyCategoryBtn = document.getElementById('copy-category');
+            
+            // 物品码相关元素
+            const addDetailBtn = document.getElementById('add-detail');
+            const generateItemBtn = document.getElementById('generate-item');
+            const itemResult = document.getElementById('item-result');
+            const itemCode = document.getElementById('item-code');
+            const copyItemBtn = document.getElementById('copy-item');
+            
+            // 模组码相关元素
+            const addFeatureBtn = document.getElementById('add-feature');
+            const generateModBtn = document.getElementById('generate-mod');
+            const modResult = document.getElementById('mod-result');
+            const modCode = document.getElementById('mod-code');
+            const copyModBtn = document.getElementById('copy-mod');
+            
+            // 标签切换功能
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签和内容的active类
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // 添加active类到当前标签和内容
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // 颜色选择器功能
+            function setupColorPicker(inputId, pickerId, previewId) {
+                const colorInput = document.getElementById(inputId);
+                const colorPicker = document.getElementById(pickerId);
+                const colorPreview = document.getElementById(previewId);
+                const colorOptions = document.querySelectorAll(`#${inputId.replace('-color', '')}-tab .color-option`);
+                
+                // 颜色输入变化
+                colorInput.addEventListener('input', function() {
+                    const color = this.value;
+                    if (/^#[0-9A-F]{6}$/i.test(color)) {
+                        colorPicker.value = color;
+                        colorPreview.style.backgroundColor = color;
+                        
+                        // 更新选中状态
+                        colorOptions.forEach(opt => {
+                            opt.classList.toggle('selected', opt.getAttribute('data-color') === color);
+                        });
+                    }
+                });
+                
+                // 颜色选择器变化
+                colorPicker.addEventListener('input', function() {
+                    const color = this.value;
+                    colorInput.value = color;
+                    colorPreview.style.backgroundColor = color;
+                    
+                    // 更新选中状态
+                    colorOptions.forEach(opt => {
+                        opt.classList.toggle('selected', opt.getAttribute('data-color') === color);
+                    });
+                });
+                
+                // 颜色选项点击
+                colorOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const color = this.getAttribute('data-color');
+                        colorInput.value = color;
+                        colorPicker.value = color;
+                        colorPreview.style.backgroundColor = color;
+                        
+                        // 更新选中状态
+                        colorOptions.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                });
+            }
+            
+            // 设置所有颜色选择器
+            setupColorPicker('reg-color', 'reg-color-picker', 'reg-color-preview');
+            setupColorPicker('card-color', 'card-color-picker', 'card-color-preview');
+            setupColorPicker('item-color', 'item-color-picker', 'item-color-preview');
+            
+            // 添加详情行功能
+            addDetailBtn.addEventListener('click', function() {
+                const detailRow = document.createElement('div');
+                detailRow.className = 'detail-row';
+                detailRow.innerHTML = `
+                    <input type="text" placeholder="属性名称" class="detail-key">
+                    <input type="text" placeholder="属性值" class="detail-value">
+                    <button class="remove-detail"><i class="fas fa-times"></i></button>
+                `;
+                
+                detailRow.querySelector('.remove-detail').addEventListener('click', function() {
+                    detailRow.remove();
+                });
+                
+                document.getElementById('item-details').appendChild(detailRow);
+            });
+            
+            // 添加功能行功能
+            addFeatureBtn.addEventListener('click', function() {
+                const featureRow = document.createElement('div');
+                featureRow.className = 'feature-row';
+                featureRow.innerHTML = `
+                    <input type="text" placeholder="功能描述">
+                    <button class="remove-feature"><i class="fas fa-times"></i></button>
+                `;
+                
+                featureRow.querySelector('.remove-feature').addEventListener('click', function() {
+                    featureRow.remove();
+                });
+                
+                document.getElementById('mod-features').appendChild(featureRow);
+            });
+            
+            // 生成注册码功能
+            generateRegisterBtn.addEventListener('click', function() {
+                const currency = document.getElementById('reg-currency').value.trim();
+                const symbol = document.getElementById('reg-symbol').value.trim();
+                const amount = parseFloat(document.getElementById('reg-amount').value);
+                const taxRate = parseFloat(document.getElementById('reg-tax-rate').value) / 100;
+                const color = document.getElementById('reg-color').value.trim();
+                const issuer = document.getElementById('reg-issuer').value.trim();
+                const supervisor = document.getElementById('reg-supervisor').value.trim();
+                
+                // 验证输入
+                if (!currency) {
+                    showAlert('请输入货币名称', 'error');
+                    return;
+                }
+                
+                if (!symbol) {
+                    showAlert('请输入货币符号', 'error');
+                    return;
+                }
+                
+                if (isNaN(amount)) {
+                    showAlert('请输入有效的初始金额', 'error');
+                    return;
+                }
+                
+                if (isNaN(taxRate)) {
+                    showAlert('请输入有效的交易税率', 'error');
+                    return;
+                }
+                
+                if (!/^#[0-9A-F]{6}$/i.test(color)) {
+                    showAlert('请输入有效的颜色代码 (如 #7b2cbf)', 'error');
+                    return;
+                }
+                
+                if (!issuer) {
+                    showAlert('请输入发行商', 'error');
+                    return;
+                }
+                
+                if (!supervisor) {
+                    showAlert('请输入货币监督组', 'error');
+                    return;
+                }
+                
+                // 创建注册数据
+                const regData = {
+                    type: 'register',
+                    defaultCurrency: currency,
+                    symbol: symbol,
+                    initialBalance: amount,
+                    taxRate: taxRate,
+                    defaultColor: color,
+                    issuer: issuer,
+                    supervisor: supervisor,
+                    timestamp: Date.now()
+                };
+                
+                // 生成注册码
+                const code = encryptData(regData);
+                
+                // 显示结果
+                registerCode.textContent = code;
+                registerResult.style.display = 'block';
+                
+                showAlert('注册码生成成功!', 'success');
+            });
+            
+            // 生成增卡码功能
+            generateCardBtn.addEventListener('click', function() {
+                const currency = document.getElementById('card-currency').value.trim();
+                const symbol = document.getElementById('card-symbol').value.trim();
+                const amount = parseFloat(document.getElementById('card-amount').value);
+                const taxRate = parseFloat(document.getElementById('card-tax-rate').value) / 100;
+                const color = document.getElementById('card-color').value.trim();
+                const issuer = document.getElementById('card-issuer').value.trim();
+                const supervisor = document.getElementById('card-supervisor').value.trim();
+                
+                // 验证输入
+                if (!currency) {
+                    showAlert('请输入货币名称', 'error');
+                    return;
+                }
+                
+                if (!symbol) {
+                    showAlert('请输入货币符号', 'error');
+                    return;
+                }
+                
+                if (isNaN(amount)) {
+                    showAlert('请输入有效的初始金额', 'error');
+                    return;
+                }
+                
+                if (isNaN(taxRate)) {
+                    showAlert('请输入有效的交易税率', 'error');
+                    return;
+                }
+                
+                if (!/^#[0-9A-F]{6}$/i.test(color)) {
+                    showAlert('请输入有效的颜色代码 (如 #7b2cbf)', 'error');
+                    return;
+                }
+                
+                if (!issuer) {
+                    showAlert('请输入发行商', 'error');
+                    return;
+                }
+                
+                if (!supervisor) {
+                    showAlert('请输入货币监督组', 'error');
+                    return;
+                }
+                
+                // 创建增卡数据
+                const cardData = {
+                    type: 'card',
+                    currency: currency,
+                    symbol: symbol,
+                    initialBalance: amount,
+                    taxRate: taxRate,
+                    color: color,
+                    issuer: issuer,
+                    supervisor: supervisor,
+                    timestamp: Date.now()
+                };
+                
+                // 生成增卡码
+                const code = encryptData(cardData);
+                
+                // 显示结果
+                cardCode.textContent = code;
+                cardResult.style.display = 'block';
+                
+                showAlert('增卡码生成成功!', 'success');
+            });
+            
+            // 生成扩类码功能
+            generateCategoryBtn.addEventListener('click', function() {
+                const category = document.getElementById('category-name').value.trim();
+                
+                // 验证输入
+                if (!category) {
+                    showAlert('请输入类别名称', 'error');
+                    return;
+                }
+                
+                // 创建扩类数据
+                const categoryData = {
+                    type: 'category',
+                    category: category,
+                    timestamp: Date.now()
+                };
+                
+                // 生成扩类码
+                const code = encryptData(categoryData);
+                
+                // 显示结果
+                categoryCode.textContent = code;
+                categoryResult.style.display = 'block';
+                
+                showAlert('扩类码生成成功!', 'success');
+            });
+            
+            // 生成物品码功能
+            generateItemBtn.addEventListener('click', function() {
+                const name = document.getElementById('item-name').value.trim();
+                const category = document.getElementById('item-category').value.trim();
+                const amount = document.getElementById('item-amount').value.trim();
+                const value = document.getElementById('item-value').value.trim();
+                const color = document.getElementById('item-color').value.trim();
+                
+                // 验证输入
+                if (!name) {
+                    showAlert('请输入物品名称', 'error');
+                    return;
+                }
+                
+                if (!category) {
+                    showAlert('请输入物品类别', 'error');
+                    return;
+                }
+                
+                if (!/^#[0-9A-F]{6}$/i.test(color)) {
+                    showAlert('请输入有效的颜色代码 (如 #7b2cbf)', 'error');
+                    return;
+                }
+                
+                // 收集详情
+                const details = {};
+                const detailRows = document.querySelectorAll('#item-details .detail-row');
+                detailRows.forEach(row => {
+                    const key = row.querySelector('.detail-key').value.trim();
+                    const value = row.querySelector('.detail-value').value.trim();
+                    if (key && value) {
+                        details[key] = value;
+                    }
+                });
+                
+                // 创建物品数据
+                const itemData = {
+                    type: 'item',
+                    name: name,
+                    category: category,
+                    color: color,
+                    timestamp: Date.now()
+                };
+                
+                if (amount) {
+                    itemData.amount = parseInt(amount);
+                }
+                
+                if (value) {
+                    itemData.value = value;
+                }
+                
+                if (Object.keys(details).length > 0) {
+                    itemData.details = details;
+                }
+                
+                // 生成物品码
+                const code = encryptData(itemData);
+                
+                // 显示结果
+                itemCode.textContent = code;
+                itemResult.style.display = 'block';
+                
+                showAlert('物品码生成成功!', 'success');
+            });
+            
+            // 生成模组码功能
+            generateModBtn.addEventListener('click', function() {
+                const name = document.getElementById('mod-name').value.trim();
+                const version = document.getElementById('mod-version').value.trim();
+                const description = document.getElementById('mod-description').value.trim();
+                const dependencies = document.getElementById('mod-dependencies').value.trim();
+                const scripts = document.getElementById('mod-scripts').value.trim();
+                
+                // 验证输入
+                if (!name) {
+                    showAlert('请输入模组名称', 'error');
+                    return;
+                }
+                
+                if (!version) {
+                    showAlert('请输入模组版本', 'error');
+                    return;
+                }
+                
+                if (!description) {
+                    showAlert('请输入模组描述', 'error');
+                    return;
+                }
+                
+                // 收集功能
+                const features = [];
+                const featureInputs = document.querySelectorAll('#mod-features input');
+                featureInputs.forEach(input => {
+                    const feature = input.value.trim();
+                    if (feature) {
+                        features.push(feature);
+                    }
+                });
+                
+                if (features.length === 0) {
+                    showAlert('请至少添加一个功能描述', 'error');
+                    return;
+                }
+                
+                // 创建模组数据
+                const modData = {
+                    type: 'mod',
+                    name: name,
+                    version: version,
+                    description: description,
+                    features: features,
+                    timestamp: Date.now()
+                };
+                
+                // 处理依赖
+                if (dependencies) {
+                    modData.dependencies = dependencies.split(',').map(d => d.trim()).filter(d => d);
+                }
+                
+                // 处理脚本
+                if (scripts) {
+                    modData.scripts = encryptData(scripts);
+                }
+                
+                // 生成模组码
+                const code = encryptData(modData);
+                
+                // 显示结果
+                modCode.textContent = code;
+                modResult.style.display = 'block';
+                
+                showAlert('模组码生成成功!', 'success');
+            });
+            
+            // 复制功能
+            function setupCopyButton(button, textElement) {
+                button.addEventListener('click', function() {
+                    const text = textElement.textContent;
+                    if (!text) {
+                        showAlert('没有可复制的内容', 'error');
+                        return;
+                    }
+                    
+                    navigator.clipboard.writeText(text)
+                        .then(() => {
+                            showAlert('复制成功!', 'success');
+                        })
+                        .catch(err => {
+                            console.error('复制失败:', err);
+                            showAlert('复制失败，请手动选择复制', 'error');
+                        });
+                });
+            }
+            
+            // 设置所有复制按钮
+            setupCopyButton(copyRegisterBtn, registerCode);
+            setupCopyButton(copyCardBtn, cardCode);
+            setupCopyButton(copyCategoryBtn, categoryCode);
+            setupCopyButton(copyItemBtn, itemCode);
+            setupCopyButton(copyModBtn, modCode);
+            
+            // 显示提示信息
+            function showAlert(message, type = 'error') {
+                alertBox.textContent = message;
+                alertBox.className = 'alert';
+                alertBox.classList.add(type === 'error' ? 'error' : 'show');
+                
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 3000);
+            }
+            
+            // 加密数据
+            function encryptData(data) {
+                try {
+                    // 添加校验码
+                    const dataWithChecksum = {
+                        ...data,
+                        checksum: generateChecksum(data)
+                    };
+                    
+                    // 简单加密 - 实际应用中应该使用更安全的加密方法
+                    const str = JSON.stringify(dataWithChecksum);
+                    return btoa(unescape(encodeURIComponent(str)));
+                } catch (error) {
+                    console.error('加密失败:', error);
+                    showAlert('数据加密失败', 'error');
+                    return null;
+                }
+            }
+            
+            // 生成校验码
+            function generateChecksum(data) {
+                // 排除checksum字段本身
+                const { checksum, ...dataToHash } = data;
+                const str = JSON.stringify(dataToHash);
+                
+                // 简单哈希算法 - 实际应用中应该使用更安全的算法
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = (hash << 5) - hash + char;
+                    hash = hash & hash; // Convert to 32bit integer
+                }
+                return hash;
+            }
+        });
+    </script>
+</body>
+</html>
